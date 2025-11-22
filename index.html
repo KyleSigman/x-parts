@@ -777,17 +777,35 @@
     };
 
     auth.onAuthStateChanged(user => {
+    if (user && user.email === "sigmankyle88@gmail.com") {
+        // Ты — авторизован как владелец
+        authScreen.style.display = 'none';
+        mainApp.style.display = 'block';
+        loadAndRender();
+    } else {
+        // Не ты — выходим
         if (user) {
-            // Показываем основной интерфейс
-            authScreen.style.display = 'none';
-            mainApp.style.display = 'block';
-            loadAndRender(); // грузим данные
-        } else {
-            // Показываем экран входа
-            authScreen.style.display = 'flex';
-            mainApp.style.display = 'none';
+            auth.signOut(); // выход, если зашёл не ты
         }
-    });
+        authScreen.style.display = 'flex';
+        mainApp.style.display = 'none';
+        if (user) {
+            alert("❌ Доступ запрещён. Только sigmankyle88@gmail.com.");
+        }
+    }
+});
+    // auth.onAuthStateChanged(user => {
+    //     if (user) {
+    //         // Показываем основной интерфейс
+    //         authScreen.style.display = 'none';
+    //         mainApp.style.display = 'block';
+    //         loadAndRender(); // грузим данные
+    //     } else {
+    //         // Показываем экран входа
+    //         authScreen.style.display = 'flex';
+    //         mainApp.style.display = 'none';
+    //     }
+    // });
 });
     </script>
 
