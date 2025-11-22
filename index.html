@@ -1,9 +1,29 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Система учёта запчастей</title>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVr3ZztynpNzkeFY3aLKFN777oPunon4o",
+            authDomain: "inspector-24f9b.firebaseapp.com",
+            databaseURL: "https://inspector-24f9b-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "inspector-24f9b",
+            storageBucket: "inspector-24f9b.firebasestorage.app",
+            messagingSenderId: "590955045913",
+            appId: "1:590955045913:web:164311eb98caeca7643688"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+    </script>
+
     <style>
         /* Общие стили */
         * {
@@ -27,11 +47,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .header-title {
-            font-size: 1.5rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
@@ -63,7 +83,7 @@
             width: 30%;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             padding: 15px;
             overflow-y: auto;
         }
@@ -115,12 +135,12 @@
             width: 70%;
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
         }
 
         .content-header {
-            font-size: 1.2em;
+            font-size: 1em;
             color: #1976d2;
             padding-bottom: 10px;
             margin-bottom: 15px;
@@ -163,7 +183,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             display: none;
             justify-content: center;
             align-items: center;
@@ -238,7 +258,8 @@
             color: #555;
         }
 
-        input, select {
+        input,
+        select {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
@@ -267,157 +288,131 @@
                 flex-direction: column;
             }
 
-            .clients-container, .content {
+            .clients-container,
+            .content {
                 width: 100%;
             }
         }
     </style>
 </head>
+
 <body>
+        <!-- Экран до входа -->
+        <div id="authScreen" style="display:flex; justify-content:center; align-items:center; height:100vh; background:#f0f5ff;">
+            <button id="loginBtn" class="ui-button" style="padding:12px 24px; font-size:1.1em;">
+                🔐 Войти через Google
+            </button>
+        </div>
     <!-- Верхняя панель -->
-    <header>
-        <div class="header-title">Система учёта запчастей</div>
-        <button class="ui-button" id="uiButton">UI</button>
-    </header>
-
-    <!-- Основной контейнер -->
-    <div class="container">
-        <!-- Левая колонка -->
-        <div class="clients-container" id="clientsContainer">
-            <!-- Клиенты и их автомобили будут добавляться динамически -->
-        </div>
-
-        <!-- Правая колонка -->
-        <div class="content" id="content">
-            <div class="content-header">Выберите автомобиль для просмотра запчастей</div>
-            <ul class="parts-list" id="partsList">
-                <!-- Список запчастей будет добавляться динамически -->
-            </ul>
-        </div>
-    </div>
-
-    <!-- Модальное окно -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <button class="close-btn" id="closeModal">&times;</button>
-            
-            <!-- Вкладки -->
-            <div class="tabs">
-                <div class="tab active" data-tab="driver">Водитель</div>
-                <div class="tab" data-tab="car">Машина</div>
-                <div class="tab" data-tab="part">Запчасть</div>
+    <div id="mainApp" style="display:none;">
+        <header>
+            <div class="header-title">Система учёта запчастей</div>
+            <button class="ui-button" id="uiButton">UI</button>
+        </header>
+        <!-- <header>
+            <div class="header-title">Система учёта запчастей</div>
+            <button class="ui-button" id="uiButton">⚙️</button>
+        </header> -->
+    
+        <!-- Основной контейнер -->
+        <div class="container">
+            <div class="clients-container" id="clientsContainer"></div>
+            <div class="content" id="content">
+                <div class="content-header">Выберите автомобиль</div>
+                <ul class="parts-list" id="partsList"></ul>
             </div>
-
-            <!-- Форма водителя -->
-            <form class="form active" id="driverForm">
-                <div class="form-group">
-                    <label for="driverName">ФИО водителя</label>
-                    <input type="text" id="driverName" required>
+        </div>
+    
+        <!-- Модальное окно -->
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeModal">&times;</button>
+    
+                <!-- Вкладки -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="driver">Водитель</div>
+                    <div class="tab" data-tab="car">Машина</div>
+                    <div class="tab" data-tab="part">Запчасть</div>
                 </div>
-                <div class="form-group">
-                    <label for="driverContact">Контактное лицо</label>
-                    <input type="text" id="driverContact" required>
-                </div>
-                <div class="form-group">
-                    <label for="driverPhone">Телефон</label>
-                    <input type="tel" id="driverPhone" required>
-                </div>
-                <button type="submit" class="submit-btn">Добавить водителя</button>
-            </form>
-
-            <!-- Форма машины -->
-            <form class="form" id="carForm">
-                <div class="form-group">
-                    <label for="carBrand">Бренд</label>
-                    <input type="text" id="carBrand" required>
-                </div>
-                <div class="form-group">
-                    <label for="carVin">VIN</label>
-                    <input type="text" id="carVin" required>
-                </div>
-                <div class="form-group">
-                    <label for="carYear">Год выпуска</label>
-                    <input type="number" id="carYear" min="1990" max="2024" required>
-                </div>
-                <div class="form-group">
-                    <label for="carPlate">Гос. номер</label>
-                    <input type="text" id="carPlate" required>
-                </div>
-                <div class="form-group">
-                    <label for="carOwner">Владелец</label>
-                    <select id="carOwner" required>
-                        <!-- Опции будут добавляться динамически -->
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn">Добавить машину</button>
-            </form>
-
-            <!-- Форма запчасти -->
-            <form class="form" id="partForm">
-                <div class="form-group">
-                    <label for="partArticle">Артикул</label>
-                    <input type="text" id="partArticle" required>
-                </div>
-                <div class="form-group">
-                    <label for="partName">Наименование</label>
-                    <input type="text" id="partName" required>
-                </div>
-                <div class="form-group">
-                    <label for="partBrand">Бренд</label>
-                    <input type="text" id="partBrand" required>
-                </div>
-                <div class="form-group">
-                    <label for="partCar">Для автомобиля</label>
-                    <select id="partCar" required>
-                        <!-- Опции будут добавляться динамически -->
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn">Добавить запчасть</button>
-            </form>
+    
+                <!-- Форма водителя -->
+                <form class="form active" id="driverForm">
+                    <div class="form-group">
+                        <label for="driverName">ФИО водителя</label>
+                        <input type="text" id="driverName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="driverContact">Контактное лицо</label>
+                        <input type="text" id="driverContact" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="driverPhone">Телефон</label>
+                        <input type="tel" id="driverPhone" required>
+                    </div>
+                    <button type="submit" class="submit-btn">Добавить водителя</button>
+                </form>
+    
+                <!-- Форма машины -->
+                <form class="form" id="carForm">
+                    <div class="form-group">
+                        <label for="carBrand">Бренд</label>
+                        <input type="text" id="carBrand" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carVin">VIN</label>
+                        <input type="text" id="carVin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carYear">Год выпуска</label>
+                        <input type="number" id="carYear" min="1990" max="2024" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carPlate">Гос. номер</label>
+                        <input type="text" id="carPlate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carOwner">Владелец</label>
+                        <select id="carOwner" required>
+                            <!-- Опции будут добавляться динамически -->
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">Добавить машину</button>
+                </form>
+    
+                <!-- Форма запчасти -->
+                <form class="form" id="partForm">
+                    <div class="form-group">
+                        <label for="partArticle">Артикул</label>
+                        <input type="text" id="partArticle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="partName">Наименование</label>
+                        <input type="text" id="partName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="partBrand">Бренд</label>
+                        <input type="text" id="partBrand" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="partCar">Для автомобиля</label>
+                        <select id="partCar" required>
+                            <!-- Опции будут добавляться динамически -->
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">Добавить запчасть</button>
+                </form>
+            </div>
+        </div>
+    
+        <div style="text-align:center; margin-top:20px; display: none;">
+            <button id="exportJsonBtn" class="ui-button">📥 Скачать всю базу как JSON</button>
+            <pre id="jsonOutput"
+                style="display:none; background:#f8f9fa; padding:15px; margin-top:10px; border-radius:6px; overflow:auto;"></pre>
         </div>
     </div>
+    
 
     <script>
-        // Пример данных
-        const partsData = {
-            '1': [ // Toyota Camry (2020)
-                { name: 'Фильтр масляный', article: 'TOY-12345' },
-                { name: 'Свечи зажигания', article: 'NGK-4321' }
-            ],
-            '2': [ // Kia Rio (2019)
-                { name: 'Щётка стеклоочистителя', article: 'KIA-9876' }
-            ],
-            '3': [ // BMW X5 (2021)
-                { name: 'Тормозные колодки', article: 'BMW-5678' },
-                { name: 'Воздушный фильтр', article: 'BMW-9012' }
-            ]
-        };
-
-        // Хранилище данных
-        let dataStore = {
-            clients: [
-                {
-                    id: 1,
-                    name: 'Иванов Иван Иванович',
-                    contact: 'Петров П.П.',
-                    phone: '+7 (123) 456-78-90',
-                    cars: [
-                        { id: 1, brand: 'Toyota Camry', year: 2020, vin: 'JTDBR32E800123456', plate: 'A123BC777' },
-                        { id: 3, brand: 'BMW X5', year: 2021, vin: 'WBAFR7C55BC123456', plate: 'B456DE777' }
-                    ]
-                },
-                {
-                    id: 2,
-                    name: 'Петров Петр Петрович',
-                    contact: 'Сидоров С.С.',
-                    phone: '+7 (987) 654-32-10',
-                    cars: [
-                        { id: 2, brand: 'Kia Rio', year: 2019, vin: 'Z94C241BBMR123456', plate: 'C789EF777' }
-                    ]
-                }
-            ]
-        };
-
         // DOM элементы
         const clientsContainer = document.getElementById('clientsContainer');
         const content = document.getElementById('content');
@@ -433,240 +428,369 @@
         const carOwnerSelect = document.getElementById('carOwner');
         const partCarSelect = document.getElementById('partCar');
 
-        // Инициализация интерфейса
-        function initUI() {
-            renderClients();
-            updateCarOwnerSelect();
-            updatePartCarSelect();
+        // Загрузка данных из Firebase и отрисовка
+        async function loadAndRender() {
+            try {
+                // Получаем всех клиентов
+                const clientsSnapshot = await db.collection('clients').get();
+                const clients = {};
+                clientsSnapshot.forEach(doc => {
+                    clients[doc.id] = doc.data();
+                });
+
+                // Получаем все машины
+                const vehiclesSnapshot = await db.collection('vehicles').get();
+                const vehicles = {};
+                vehiclesSnapshot.forEach(doc => {
+                    vehicles[doc.id] = doc.data();
+                });
+
+                // Получаем все запчасти
+                const partsSnapshot = await db.collection('parts').get();
+                const parts = {};
+                partsSnapshot.forEach(doc => {
+                    parts[doc.id] = doc.data();
+                });
+
+                // Получаем совместимость
+                const compatSnapshot = await db.collection('compatibility').get();
+                const compatibility = {};
+                compatSnapshot.forEach(doc => {
+                    compatibility[doc.id] = doc.data();
+                });
+
+                // Отрисовка клиентов и их машин
+                renderClientsAndCars(clients, vehicles);
+
+                // Обновляем выпадающие списки в формах
+                updateSelects(clients, vehicles);
+            } catch (err) {
+                console.error("Ошибка загрузки данных:", err);
+                alert("❌ Не удалось загрузить данные из Firebase");
+            }
         }
 
-        // Отрисовка клиентов и автомобилей
-        function renderClients() {
+        function renderClientsAndCars(clients, vehicles) {
             clientsContainer.innerHTML = '';
-            
-            dataStore.clients.forEach(client => {
-                const clientItem = document.createElement('div');
-                clientItem.className = 'client-item';
-                clientItem.innerHTML = `
-                    <div>${client.name}</div>
-                    <div style="font-size: 0.8em; color: #777;">${client.phone}</div>
-                `;
-                
-                const carList = document.createElement('div');
-                carList.className = 'car-list';
-                
-                client.cars.forEach(car => {
-                    const carItem = document.createElement('div');
-                    carItem.className = 'car-item';
-                    carItem.setAttribute('data-car-id', car.id);
-                    carItem.innerHTML = `${car.brand} (${car.year}) - ${car.plate}`;
-                    
-                    carItem.addEventListener('click', function() {
-                        // Снимаем выделение со всех машин
-                        document.querySelectorAll('.car-item').forEach(item => {
-                            item.classList.remove('selected');
-                        });
-                        
-                        // Выделяем выбранную машину
-                        this.classList.add('selected');
-                        
-                        // Показываем запчасти
-                        showPartsForCar(car.id, `${car.brand} (${car.year})`);
-                    });
-                    
-                    carList.appendChild(carItem);
+
+            // Загружаем совместимость и запчасти один раз
+            db.collection('compatibility').get().then(compatSnapshot => {
+                const compatibility = {};
+                compatSnapshot.forEach(doc => {
+                    compatibility[doc.id] = doc.data();
                 });
-                
-                clientItem.appendChild(carList);
-                clientsContainer.appendChild(clientItem);
+
+                db.collection('parts').get().then(partsSnapshot => {
+                    const parts = {};
+                    partsSnapshot.forEach(doc => {
+                        parts[doc.id] = doc.data();
+                    });
+
+                    for (const clientId in clients) {
+                        const client = clients[clientId];
+
+                        // Элемент клиента
+                        const clientItem = document.createElement('div');
+                        clientItem.className = 'client-item';
+                        clientItem.innerHTML = `
+                    <div><strong>${client.name || 'Без имени'}</strong></div>
+                    <div style="font-size: 0.85em; color: #666;">${client.phone || ''}</div>
+                `;
+
+                        // Контейнер для машин (скрыт по умолчанию)
+                        const carList = document.createElement('div');
+                        carList.className = 'car-list';
+                        carList.style.display = 'none'; // ← скрыт
+
+                        // Собираем машины клиента
+                        const clientCars = [];
+                        for (const vin in vehicles) {
+                            const car = vehicles[vin];
+                            if (car.owner_id === clientId) {
+                                clientCars.push({ vin, car });
+                            }
+                        }
+
+                        // Добавляем машины в скрытый блок
+                        clientCars.forEach(({ vin, car }) => {
+                            const carItem = document.createElement('div');
+                            carItem.className = 'car-item';
+                            carItem.innerHTML = `${car.brand || ''} (${car.year || '?'}) - ${car.plate || vin}`;
+                            carItem.addEventListener('click', (e) => {
+                                e.stopPropagation(); // не срабатывает клик по клиенту
+                                document.querySelectorAll('.car-item').forEach(el => el.classList.remove('selected'));
+                                carItem.classList.add('selected');
+                                showPartsForCar(vin, car, compatibility, parts);
+                            });
+                            carList.appendChild(carItem);
+                        });
+
+                        // Клик по клиенту — переключает видимость машин
+                        clientItem.addEventListener('click', () => {
+                            const isVisible = carList.style.display === 'block';
+                            carList.style.display = isVisible ? 'none' : 'block';
+                        });
+
+                        clientItem.appendChild(carList);
+                        clientsContainer.appendChild(clientItem);
+                    }
+                });
             });
         }
 
-        // Показать запчасти для выбранной машины
-        function showPartsForCar(carId, carName) {
-            const contentHeader = content.querySelector('.content-header');
-            contentHeader.textContent = `Запчасти для: ${carName}`;
-            
+        function showPartsForCar(vin, car, compatibility, parts) {
+            const header = content.querySelector('.content-header');
+            header.textContent = `Запчасти для: ${car.brand || ''} ${car.model || ''} (${car.year || ''})`;
+
             partsList.innerHTML = '';
-            
-            if (partsData[carId]) {
-                partsData[carId].forEach(part => {
-                    const partItem = document.createElement('li');
-                    partItem.className = 'part-item';
-                    partItem.innerHTML = `
-                        <div class="part-name">${part.name}</div>
-                        <div class="part-article">${part.article}</div>
-                    `;
-                    partsList.appendChild(partItem);
+
+            const compat = compatibility[vin];
+            if (compat && compat.parts && Array.isArray(compat.parts)) {
+                compat.parts.forEach(article => {
+                    const part = parts[article];
+                    if (part) {
+                        const partItem = document.createElement('li');
+                        partItem.className = 'part-item';
+                        partItem.innerHTML = `
+                            <div class="part-name">${part.name || article}</div>
+                            <div class="part-article">${part.article || article}</div>
+                        `;
+                        partsList.appendChild(partItem);
+                    }
                 });
-            } else {
+            }
+
+            if (partsList.children.length === 0) {
                 partsList.innerHTML = '<li class="part-item">Запчасти не найдены</li>';
             }
         }
 
-        // Обновление выпадающего списка владельцев для формы машины
-        function updateCarOwnerSelect() {
-            carOwnerSelect.innerHTML = '';
-            
-            dataStore.clients.forEach(client => {
-                const option = document.createElement('option');
-                option.value = client.id;
-                option.textContent = client.name;
-                carOwnerSelect.appendChild(option);
-            });
+        function updateSelects(clients, vehicles) {
+            carOwnerSelect.innerHTML = '<option value="">Выберите владельца</option>';
+            for (const id in clients) {
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = clients[id].name || id;
+                carOwnerSelect.appendChild(opt);
+            }
+
+            partCarSelect.innerHTML = '<option value="">Выберите автомобиль</option>';
+            for (const vin in vehicles) { // ← vin это ключ
+                const car = vehicles[vin];
+                const clientId = car.owner_id;
+                const clientName = clients[clientId]?.name || 'Неизвестен';
+                const opt = document.createElement('option');
+                opt.value = vin; // ✅ передаём VIN
+                opt.textContent = `${car.brand || ''} (${car.year || ''}) — ${clientName}`;
+                partCarSelect.appendChild(opt);
+            }
         }
 
-        // Обновление выпадающего списка автомобилей для формы запчасти
-        function updatePartCarSelect() {
-            partCarSelect.innerHTML = '';
-            
-            dataStore.clients.forEach(client => {
-                client.cars.forEach(car => {
-                    const option = document.createElement('option');
-                    option.value = car.id;
-                    option.textContent = `${car.brand} (${car.year}) - ${client.name}`;
-                    partCarSelect.appendChild(option);
-                });
-            });
-        }
+        // Обработчики модального окна
+        uiButton.addEventListener('click', () => modal.classList.add('show'));
+        closeModal.addEventListener('click', () => modal.classList.remove('show'));
 
-        // Обработчики событий для модального окна
-        uiButton.addEventListener('click', function() {
-            modal.classList.add('show');
-        });
-
-        closeModal.addEventListener('click', function() {
-            modal.classList.remove('show');
-        });
-
-        // Обработчики событий для вкладок
         tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const tabId = this.getAttribute('data-tab');
-                
-                // Убираем активный класс у всех вкладок
+            tab.addEventListener('click', function () {
+                const tabId = this.dataset.tab;
                 tabs.forEach(t => t.classList.remove('active'));
-                
-                // Добавляем активный класс текущей вкладке
                 this.classList.add('active');
-                
-                // Скрываем все формы
-                forms.forEach(form => form.classList.remove('active'));
-                
-                // Показываем соответствующую форму
+                forms.forEach(f => f.classList.remove('active'));
                 document.getElementById(`${tabId}Form`).classList.add('active');
             });
         });
 
-        // Обработчики отправки форм
-        driverForm.addEventListener('submit', function(e) {
+        // === Обработчики форм (остаются как были) ===
+        driverForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
-            const name = document.getElementById('driverName').value;
-            const contact = document.getElementById('driverContact').value;
-            const phone = document.getElementById('driverPhone').value;
-            
-            // Создание нового клиента
-            const newClient = {
-                id: dataStore.clients.length + 1,
-                name: name,
-                contact: contact,
-                phone: phone,
-                cars: []
+            const clientId = 'client_' + Date.now();
+            const clientData = {
+                id: clientId,
+                name: document.getElementById('driverName').value,
+                contact: document.getElementById('driverContact').value,
+                phone: document.getElementById('driverPhone').value,
+                cars: [],
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
-            
-            dataStore.clients.push(newClient);
-            
-            // Обновление интерфейса
-            renderClients();
-            updateCarOwnerSelect();
-            
-            // Сброс формы
-            this.reset();
-            
-            // Закрытие модального окна
-            modal.classList.remove('show');
-            
-            alert('Водитель успешно добавлен!');
+            db.collection('clients').doc(clientId).set(clientData)
+                .then(() => {
+                    alert('✅ Водитель добавлен!');
+                    modal.classList.remove('show');
+                    loadAndRender();
+                })
+                .catch(err => alert('❌ Ошибка: ' + err.message));
         });
 
-        carForm.addEventListener('submit', function(e) {
+        carForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
-            const brand = document.getElementById('carBrand').value;
-            const vin = document.getElementById('carVin').value;
-            const year = document.getElementById('carYear').value;
-            const plate = document.getElementById('carPlate').value;
-            const ownerId = parseInt(document.getElementById('carOwner').value);
-            
-            // Создание новой машины
-            const newCar = {
-                id: dataStore.clients.reduce((maxId, client) => {
-                    const maxCarId = client.cars.reduce((carMax, car) => Math.max(carMax, car.id), 0);
-                    return Math.max(maxId, maxCarId);
-                }, 0) + 1,
-                brand: brand,
-                year: year,
-                vin: vin,
-                plate: plate
-            };
-            
-            // Добавление машины владельцу
-            const owner = dataStore.clients.find(client => client.id === ownerId);
-            if (owner) {
-                owner.cars.push(newCar);
+            const vin = document.getElementById('carVin').value.trim().toUpperCase();
+            if (vin.length !== 17) {
+                alert('VIN должен быть 17 символов');
+                return;
             }
-            
-            // Обновление интерфейса
-            renderClients();
-            updatePartCarSelect();
-            
-            // Сброс формы
-            this.reset();
-            
-            // Закрытие модального окна
-            modal.classList.remove('show');
-            
-            alert('Машина успешно добавлена!');
+
+            // Проверяем, существует ли уже
+            db.collection('vehicles').doc(vin).get().then(doc => {
+                if (doc.exists) {
+                    alert('❌ Машина с таким VIN уже есть');
+                    return;
+                }
+
+                const carData = {
+                    vin: vin,
+                    brand: document.getElementById('carBrand').value,
+                    model: document.getElementById('carModel')?.value || '',
+                    engine: document.getElementById('carEngine')?.value || '',
+                    year: parseInt(document.getElementById('carYear').value),
+                    plate: document.getElementById('carPlate').value,
+                    owner_id: document.getElementById('carOwner').value,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                db.collection('vehicles').doc(vin).set(carData).then(() => {
+                    // Привязываем к клиенту
+                    db.collection('clients').doc(carData.owner_id).update({
+                        cars: firebase.firestore.FieldValue.arrayUnion(vin)
+                    }).catch(() => { });
+                    alert('✅ Машина добавлена');
+                    modal.classList.remove('show');
+                    loadAndRender();
+                });
+            });
         });
 
-        partForm.addEventListener('submit', function(e) {
+
+        partForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
-            const article = document.getElementById('partArticle').value;
-            const name = document.getElementById('partName').value;
-            const brand = document.getElementById('partBrand').value;
-            const carId = parseInt(document.getElementById('partCar').value);
-            
-            // Создание новой запчасти
-            const newPart = {
-                name: name,
-                article: article
+            const article = document.getElementById('partArticle').value.trim();
+            if (!article) return;
+            const partId = article;
+            const partData = {
+                article: article,
+                name: document.getElementById('partName').value,
+                brand: document.getElementById('partBrand').value,
+                system: 'unknown',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
-            
-            // Добавление запчасти к машине
-            if (!partsData[carId]) {
-                partsData[carId] = [];
-            }
-            partsData[carId].push(newPart);
-            
-            // Обновление интерфейса, если эта машина сейчас выбрана
-            const selectedCar = document.querySelector('.car-item.selected');
-            if (selectedCar && parseInt(selectedCar.getAttribute('data-car-id')) === carId) {
-                showPartsForCar(carId, selectedCar.textContent.split(' - ')[0]);
-            }
-            
-            // Сброс формы
-            this.reset();
-            
-            // Закрытие модального окна
-            modal.classList.remove('show');
-            
-            alert('Запчасть успешно добавлена!');
+            db.collection('parts').doc(partId).set(partData)
+                .then(() => {
+                    const vin = document.getElementById('partCar').value;
+                    const compatRef = db.collection('compatibility').doc(vin);
+                    compatRef.get().then(doc => {
+                        if (doc.exists) {
+                            const partsList = doc.data().parts || [];
+                            if (!partsList.includes(article)) {
+                                compatRef.update({
+                                    parts: firebase.firestore.FieldValue.arrayUnion(article)
+                                });
+                            }
+                        } else {
+                            compatRef.set({ parts: [article] });
+                        }
+                    });
+                    alert('✅ Запчасть добавлена!');
+                    modal.classList.remove('show');
+                    loadAndRender();
+                })
+                .catch(err => alert('❌ Ошибка: ' + err.message));
         });
 
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', initUI);
+        // Кнопка экспорта
+        document.getElementById('exportJsonBtn').addEventListener('click', async () => {
+            const exportData = { parts: {}, vehicles: {}, clients: {}, compatibility: {} };
+            const collections = ['parts', 'vehicles', 'clients', 'compatibility'];
+            for (const colName of collections) {
+                const snapshot = await db.collection(colName).get();
+                snapshot.forEach(doc => {
+                    exportData[colName][doc.id] = doc.data();
+                });
+            }
+            const jsonStr = JSON.stringify(exportData, null, 2);
+            const output = document.getElementById('jsonOutput');
+            output.textContent = jsonStr;
+            output.style.display = 'block';
+            output.focus();
+            output.select();
+            alert('Готово! Скопируйте текст выше и сохраните как parts_system.json');
+        });
+
+        // Загружаем данные при старте
+        // document.addEventListener('DOMContentLoaded', loadAndRender);
+
+        // === АВТОРИЗАЦИЯ (без слома DOM) ===
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const loginBtn = document.getElementById('loginBtn');
+        //     const authContainer = document.getElementById('authContainer');
+        //     const uiButton = document.getElementById('uiButton');
+        //     const userEmail = document.getElementById('userEmail');
+
+        //     if (!loginBtn || !authContainer || !uiButton) return;
+
+        //     const auth = firebase.auth();
+        //     const provider = new firebase.auth.GoogleAuthProvider();
+
+        //     loginBtn.onclick = () => {
+        //         auth.signInWithPopup(provider).catch(alert);
+        //     };
+
+        //     // Скрываем UI-кнопку, показываем вход
+        //     uiButton.style.display = 'none';
+        //     authContainer.style.display = 'flex';
+        //     authContainer.style.alignItems = 'center';
+        //     authContainer.style.gap = '10px';
+
+        //     auth.onAuthStateChanged(user => {
+        //         if (user) {
+        //             // Пользователь вошёл
+        //             authContainer.style.display = 'none';
+        //             uiButton.style.display = 'block';
+        //             if (userEmail) userEmail.textContent = user.email || '';
+        //             loadAndRender(); // ← Грузим данные ТОЛЬКО после входа
+        //         } else {
+        //             // Пользователь не авторизован
+        //             uiButton.style.display = 'none';
+        //             authContainer.style.display = 'flex';
+        //             // Очищаем интерфейс
+        //             clientsContainer.innerHTML = '';
+        //             partsList.innerHTML = '';
+        //             content.querySelector('.content-header').textContent = 'Выберите автомобиль';
+        //         }
+        //     });
+
+        // });
+        document.addEventListener('DOMContentLoaded', () => {
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+    
+    const authScreen = document.getElementById('authScreen');
+    const mainApp = document.getElementById('mainApp');
+    const loginBtn = document.getElementById('loginBtn');
+    const uiButton = document.getElementById('uiButton');
+
+    if (!authScreen || !mainApp || !loginBtn) return;
+
+    loginBtn.onclick = () => {
+        auth.signInWithPopup(provider).catch(err => {
+            console.error(err);
+            alert('Ошибка входа: ' + err.message);
+        });
+    };
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // Показываем основной интерфейс
+            authScreen.style.display = 'none';
+            mainApp.style.display = 'block';
+            loadAndRender(); // грузим данные
+        } else {
+            // Показываем экран входа
+            authScreen.style.display = 'flex';
+            mainApp.style.display = 'none';
+        }
+    });
+});
     </script>
+
 </body>
+
 </html>
