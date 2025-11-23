@@ -450,8 +450,6 @@
                 </div>
                 <button type="submit" class="submit-btn">Добавить запчасть</button>
             </form>
-
-            <!-- Форма групп совместимости -->
             <!-- Форма одной группы совместимости -->
             <form class="form" id="compatForm">
                 <div class="form-group">
@@ -551,7 +549,21 @@
                 "brand": "BEIBEN", "models": {
                     "5NA": "V3", "5NB": "NG80", "ZZ3327": "V3"
                 }
-            }
+            },
+               // Новый блок для LGA
+    "LGA": {
+        "brand": "HOWO / SINOTRUK",
+        "models": {
+            "G3D": "T7H",      // Пример: из VIN LGAG3DV21P8836707 → G3D → T7H
+            "V21": "C7H",     // Примерное соответствие (уточнить по каталогу)
+            "P88": "A7",    // Примерное соответствие
+            // Добавить другие коды моделей по необходимости
+            "5CL": "C7H",
+            "5BP": "T7H",
+            "5BR": "T5G",
+            "5CA": "A7"
+        }
+    }
         };
 
         const YEAR_CODES = {
@@ -1093,6 +1105,7 @@
             db.collection('clients').doc(clientId).set(clientData)
                 .then(() => {
                     alert('✅ Водитель добавлен!');
+                    this.reset(); // ← ОЧИСТКА ФОРМЫ
                     modal.classList.remove('show');
                     loadAndRender();
                 })
@@ -1131,6 +1144,7 @@
                         cars: firebase.firestore.FieldValue.arrayUnion(vin)
                     }).catch(() => { });
                     alert('✅ Машина добавлена');
+                    this.reset(); // ← ОЧИСТКА ФОРМЫ
                     modal.classList.remove('show');
                     loadAndRender();
                 });
@@ -1154,6 +1168,7 @@
             db.collection('parts').doc(article).set(partData)
                 .then(() => {
                     alert('✅ Запчасть добавлена!');
+                    this.reset(); // ← ОЧИСТКА ФОРМЫ
                     modal.classList.remove('show');
                     loadAndRender();
                 })
