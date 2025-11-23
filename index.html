@@ -651,8 +651,6 @@
             return preview;
         }
 
-
-
         // Обработчик ввода VIN
         document.getElementById('carVin').addEventListener('input', function () {
             // document.getElementById('carVin').addEventListener('blur', function () {
@@ -787,7 +785,8 @@
                                 e.stopPropagation(); // не срабатывает клик по клиенту
                                 document.querySelectorAll('.car-item').forEach(el => el.classList.remove('selected'));
                                 carItem.classList.add('selected');
-                                showPartsForCar(vin, car, parts);
+                                showPartsForCar(vin, car);
+                                // showPartsForCar(vin, car, parts);
                                 // showPartsForCar(vin, car, compatibility, parts);
                             });
                             carList.appendChild(carItem);
@@ -900,50 +899,122 @@
         //     }
         // }
 
+            // Глобальная переменная — кэш фильтров (загружается один раз)
+let CACHED_FILTER_LINES = null;
 
-        function showPartsForCar(vin, car, parts) {
-            const header = content.querySelector('.content-header');
-            header.textContent = `Запчасти для: ${car.brand || ''} ${car.model || ''} (${car.year || ''})`;
+async function loadFiltersOnce() {
+    if (CACHED_FILTER_LINES) return CACHED_FILTER_LINES;
+    try {
+        const response = await fetch('categories_export_full.txt');
+        const text = await response.text();
+        CACHED_FILTER_LINES = parseFiltersFromText(text);
+        return CACHED_FILTER_LINES;
+    } catch (e) {
+        console.error("Не удалось загрузить фильтры:", e);
+        return [];
+    }
+}
 
-            // Ищем группу, соответствующую параметрам ЭТОЙ машины
-            db.collection('compatibility')
-                .where('brand', '==', car.brand)
-                .where('model', '==', car.model)
-                .where('engine', '==', car.engine)
-                .limit(1)
-                .get()
-                .then(snapshot => {
-                    let targetGroupId = null;
-                    if (!snapshot.empty) {
-                        targetGroupId = snapshot.docs[0].id;
-                    }
-
-                    // Теперь показываем все запчасти с этим compat_group
-                    partsList.innerHTML = '';
-                    let found = false;
-                    for (const article in parts) {
-                        const part = parts[article];
-                        if (part.compat_group === targetGroupId) {
-                            const partItem = document.createElement('li');
-                            partItem.className = 'part-item';
-                            partItem.innerHTML = `
-                        <div class="part-name">${part.name || article}</div>
-                        <div class="part-article">${part.article || article}</div>
-                    `;
-                            partsList.appendChild(partItem);
-                            found = true;
-                        }
-                    }
-
-                    if (!found) {
-                        partsList.innerHTML = '<li class="part-item">Запчасти не найдены</li>';
-                    }
-                })
-                .catch(err => {
-                    console.error("Ошибка поиска группы:", err);
-                    partsList.innerHTML = '<li class="part-item">❌ Ошибка загрузки</li>';
-                });
+function parseFiltersFromText(text) {
+    const lines = text.split('\n');
+    let inFilters = false;
+    const filterLines = [];
+    for (const line of lines) {
+        const clean = line.trim();
+        if (clean === "=== FILTRY ===") {
+            inFilters = true;
+            continue;
         }
+        if (inFilters && clean.startsWith("===")) {
+            break; // выходим при следующем разделе
+        }
+        if (inFilters && clean && !clean.startsWith("===")) {
+            filterLines.push(clean);
+        }
+    }
+    return filterLines;
+}
+
+// ОБНОВЛЁННАЯ ФУНКЦИЯ
+async function showPartsForCar(vin, car) {
+    const header = content.querySelector('.content-header');
+    header.textContent = `Фильтры для: ${car.brand || ''} ${car.model || ''} (${car.year || ''})`;
+
+    const filters = await loadFiltersOnce();
+
+    const brandStr = (car.brand || '').toLowerCase();
+const brandTerms = brandStr.includes('/') 
+    ? brandStr.split('/').map(s => s.trim()) 
+    : [brandStr];
+
+const matched = filters.filter(line => {
+    const lineLower = line.toLowerCase();
+    return brandTerms.some(term => lineLower.includes(term));
+});
+
+    // const brand = (car.brand || '').toLowerCase();
+    // const matched = filters.filter(line => 
+    //     line.toLowerCase().includes(brand)
+    // );
+
+    partsList.innerHTML = '';
+    if (matched.length > 0) {
+        matched.forEach((item, i) => {
+            const el = document.createElement('li');
+            el.className = 'part-item';
+            el.innerHTML = `<div class="part-name">${item}</div>`;
+            partsList.appendChild(el);
+        });
+    } else {
+        partsList.innerHTML = '<li class="part-item">Фильтры не найдены</li>';
+    }
+}
+
+        // function showPartsForCar(vin, car, parts) {
+        //     const header = content.querySelector('.content-header');
+        //     header.textContent = `Запчасти для: ${car.brand || ''} ${car.model || ''} (${car.year || ''})`;
+
+        //     // Ищем группу, соответствующую параметрам ЭТОЙ машины
+        //     db.collection('compatibility')
+        //         .where('brand', '==', car.brand)
+        //         .where('model', '==', car.model)
+        //         .where('engine', '==', car.engine)
+        //         .limit(1)
+        //         .get()
+        //         .then(snapshot => {
+        //             let targetGroupId = null;
+        //             if (!snapshot.empty) {
+        //                 targetGroupId = snapshot.docs[0].id;
+        //             }
+
+        //             // Теперь показываем все запчасти с этим compat_group
+        //             partsList.innerHTML = '';
+        //             let found = false;
+        //             for (const article in parts) {
+        //                 const part = parts[article];
+        //                 if (part.compat_group === targetGroupId) {
+        //                     const partItem = document.createElement('li');
+        //                     partItem.className = 'part-item';
+        //                     partItem.innerHTML = `
+        //                 <div class="part-name">${part.name || article}</div>
+        //                 <div class="part-article">${part.article || article}</div>
+        //             `;
+        //                     partsList.appendChild(partItem);
+        //                     found = true;
+        //                 }
+        //             }
+
+        //             if (!found) {
+        //                 partsList.innerHTML = '<li class="part-item">Запчасти не найдены</li>';
+        //             }
+        //         })
+        //         .catch(err => {
+        //             console.error("Ошибка поиска группы:", err);
+        //             partsList.innerHTML = '<li class="part-item">❌ Ошибка загрузки</li>';
+        //         });
+        // }
+
+
 
         // function showPartsForCar(vin, car, parts) {
         //     // Сначала найдём группу, соответствующую параметрам машины
@@ -1145,52 +1216,52 @@
                 .catch(err => alert('❌ Ошибка: ' + err.message));
         });
 
-        carForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    
-    let vin = document.getElementById('carVin').value.trim().toUpperCase();
-    if (!vin) {
-        alert('VIN обязателен');
-        return;
-    }
+            carForm.addEventListener('submit', function (e) {
+                e.preventDefault();
 
-    // Генерируем уникальный ID, если VIN короче 5 символов (например, введено "12345")
-    const useAsId = vin.length >= 5 ? vin : 'manual_' + Date.now();
+                let vin = document.getElementById('carVin').value.trim().toUpperCase();
+                if (!vin) {
+                    alert('VIN обязателен');
+                    return;
+                }
 
-    // Проверяем существование по ID (не только по 17-символьному VIN)
-    db.collection('vehicles').doc(useAsId).get().then(doc => {
-        if (doc.exists) {
-            alert('❌ Машина с таким VIN (или ID) уже существует');
-            return;
-        }
+                // Генерируем уникальный ID, если VIN короче 5 символов (например, введено "12345")
+                const useAsId = vin.length >= 5 ? vin : 'manual_' + Date.now();
 
-        const carData = {
-            vin: vin, // сохраняем оригинальный ввод
-            brand: document.getElementById('carBrand').value.trim(),
-            model: document.getElementById('carModel').value.trim(),
-            engine: document.getElementById('carEngine').value.trim(),
-            year: parseInt(document.getElementById('carYear').value) || null,
-            plate: document.getElementById('carPlate').value.trim(),
-            owner_id: document.getElementById('carOwner').value,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        };
+                // Проверяем существование по ID (не только по 17-символьному VIN)
+                db.collection('vehicles').doc(useAsId).get().then(doc => {
+                    if (doc.exists) {
+                        alert('❌ Машина с таким VIN (или ID) уже существует');
+                        return;
+                    }
 
-        db.collection('vehicles').doc(useAsId).set(carData).then(() => {
-            // Привязка к клиенту
-            if (carData.owner_id) {
-                db.collection('clients').doc(carData.owner_id).update({
-                    cars: firebase.firestore.FieldValue.arrayUnion(useAsId)
-                }).catch(() => {});
-            }
-            alert('✅ Машина добавлена');
-            this.reset();
-            modal.classList.remove('show');
-            loadAndRender();
-        }).catch(err => {
-            alert('❌ Ошибка сохранения: ' + err.message);
-        });
-    });
-});
+                    const carData = {
+                        vin: vin, // сохраняем оригинальный ввод
+                        brand: document.getElementById('carBrand').value.trim(),
+                        model: document.getElementById('carModel').value.trim(),
+                        engine: document.getElementById('carEngine').value.trim(),
+                        year: parseInt(document.getElementById('carYear').value) || null,
+                        plate: document.getElementById('carPlate').value.trim(),
+                        owner_id: document.getElementById('carOwner').value,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    db.collection('vehicles').doc(useAsId).set(carData).then(() => {
+                        // Привязка к клиенту
+                        if (carData.owner_id) {
+                            db.collection('clients').doc(carData.owner_id).update({
+                                cars: firebase.firestore.FieldValue.arrayUnion(useAsId)
+                            }).catch(() => { });
+                        }
+                        alert('✅ Машина добавлена');
+                        this.reset();
+                        modal.classList.remove('show');
+                        loadAndRender();
+                    }).catch(err => {
+                        alert('❌ Ошибка сохранения: ' + err.message);
+                    });
+                });
+            });
 
         // carForm.addEventListener('submit', function (e) {
         //     e.preventDefault();
