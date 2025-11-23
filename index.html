@@ -300,8 +300,17 @@
     <!-- Верхняя панель -->
     <header>
         <div class="header-title">Система учёта запчастей</div>
-        <button class="ui-button" id="uiButton">⚙️</button>
+        <button class="ui-button" id="uiButton">UI</button> <!-- ЭТА КНОПКА ДОЛЖНА БЫТЬ -->
+        <!-- Auth-блок можно оставить или убрать -->
+        <div id="authContainer" style="display:none;">
+            <button id="loginBtn" class="ui-button">🔐 Войти</button>
+            <span id="userEmail" style="color:white; margin-left:10px;"></span>
+        </div>
     </header>
+    <!-- <header>
+        <div class="header-title">Система учёта запчастей</div>
+        <button class="ui-button" id="uiButton">⚙️</button>
+    </header> -->
 
     <!-- Основной контейнер -->
     <div class="container">
@@ -532,99 +541,7 @@
     });
 }
 
-//         function renderClientsAndCars(clients, vehicles) {
-//     clientsContainer.innerHTML = '';
 
-//     // Загружаем совместимость ОДИН РАЗ
-//     db.collection('compatibility').get().then(compatSnapshot => {
-//         const compatibility = {};
-//         compatSnapshot.forEach(doc => {
-//             compatibility[doc.id] = doc.data();
-//         });
-
-//         // Загружаем запчасти ОДИН РАЗ
-//         db.collection('parts').get().then(partsSnapshot => {
-//             const parts = {};
-//             partsSnapshot.forEach(doc => {
-//                 parts[doc.id] = doc.data();
-//             });
-
-//             for (const clientId in clients) {
-//                 const client = clients[clientId];
-//                 const clientItem = document.createElement('div');
-//                 clientItem.className = 'client-item';
-//                 clientItem.innerHTML = `
-//                     <div>${client.name || 'Без имени'}</div>
-//                     <div style="font-size: 0.8em; color: #777;">${client.phone || ''}</div>
-//                 `;
-
-//                 const carList = document.createElement('div');
-//                 carList.className = 'car-list';
-
-//                 for (const vin in vehicles) {
-//                     const car = vehicles[vin];
-//                     if (car.owner_id === clientId) {
-//                         const carItem = document.createElement('div');
-//                         carItem.className = 'car-item';
-//                         carItem.setAttribute('data-vin', vin);
-//                         carItem.innerHTML = `${car.brand || ''} (${car.year || '?'}) - ${car.plate || vin}`;
-                        
-//                         carItem.addEventListener('click', () => {
-//                             document.querySelectorAll('.car-item').forEach(el => el.classList.remove('selected'));
-//                             carItem.classList.add('selected');
-//                             // Передаём vin, parts и compatibility напрямую
-//                             showPartsForCar(vin, car, compatibility, parts);
-//                         });
-                        
-//                         carList.appendChild(carItem);
-//                     }
-//                 }
-
-//                 clientItem.appendChild(carList);
-//                 clientsContainer.appendChild(clientItem);
-//             }
-//         });
-//     });
-// }
-
-        // function renderClientsAndCars(clients, vehicles) {
-        //     clientsContainer.innerHTML = '';
-
-        //     for (const clientId in clients) {
-        //         const client = clients[clientId];
-        //         const clientItem = document.createElement('div');
-        //         clientItem.className = 'client-item';
-        //         clientItem.innerHTML = `
-        //             <div>${client.name || 'Без имени'}</div>
-        //             <div style="font-size: 0.8em; color: #777;">${client.phone || ''}</div>
-        //         `;
-
-        //         const carList = document.createElement('div');
-        //         carList.className = 'car-list';
-
-        //         // Находим машины этого клиента
-        //         for (const vin in vehicles) {
-        //             const car = vehicles[vin];
-        //             if (car.owner_id === clientId) {
-        //                 const carItem = document.createElement('div');
-        //                 carItem.className = 'car-item';
-        //                 carItem.setAttribute('data-vin', vin);
-        //                 carItem.innerHTML = `${car.brand || ''} (${car.year || '?'}) - ${car.plate || vin}`;
-
-        //                 carItem.addEventListener('click', () => {
-        //                     document.querySelectorAll('.car-item').forEach(el => el.classList.remove('selected'));
-        //                     carItem.classList.add('selected');
-        //                     showPartsForCar(vin, car, compatibility, parts);
-        //                 });
-
-        //                 carList.appendChild(carItem);
-        //             }
-        //         }
-
-        //         clientItem.appendChild(carList);
-        //         clientsContainer.appendChild(clientItem);
-        //     }
-        // }
 
         function showPartsForCar(vin, car, compatibility, parts) {
             const header = content.querySelector('.content-header');
@@ -674,51 +591,7 @@
     }
 }
 
-        // function updateSelects(clients, vehicles) {
-        //     carOwnerSelect.innerHTML = '<option value="">Выберите владельца</option>';
-        //     for (const id in clients) {
-        //         const opt = document.createElement('option');
-        //         opt.value = id;
-        //         opt.textContent = clients[id].name || id;
-        //         carOwnerSelect.appendChild(opt);
-        //     }
-
-        //     partCarSelect.innerHTML = '<option value="">Выберите автомобиль</option>';
-        //     for (const vehicleId in vehicles) {
-        //         const car = vehicles[vehicleId];
-        //         const clientId = car.owner_id;
-        //         const clientName = clients[clientId]?.name || 'Неизвестен';
-        //         const opt = document.createElement('option');
-        //         opt.value = vehicleId; // ← ID документа, не VIN
-        //         opt.textContent = `${car.brand || ''} (${car.year || ''}) — ${clientName} [VIN: ${car.vin}]`;
-        //         partCarSelect.appendChild(opt);
-        //     }
-        // }
         
-        
-        // function updateSelects(clients, vehicles) {
-        //     // Владельцы для формы машины
-        //     carOwnerSelect.innerHTML = '<option value="">Выберите владельца</option>';
-        //     for (const id in clients) {
-        //         const opt = document.createElement('option');
-        //         opt.value = id;
-        //         opt.textContent = clients[id].name || id;
-        //         carOwnerSelect.appendChild(opt);
-        //     }
-
-        //     // Машины для формы запчасти
-        //     partCarSelect.innerHTML = '<option value="">Выберите автомобиль</option>';
-        //     for (const vin in vehicles) {
-        //         const car = vehicles[vin];
-        //         const clientId = car.owner_id;
-        //         const clientName = clients[clientId]?.name || 'Неизвестен';
-        //         const opt = document.createElement('option');
-        //         opt.value = vehicleId; // ← но нужно взять из данных
-        //         // opt.value = vin;
-        //         opt.textContent = `${car.brand || ''} (${car.year || ''}) — ${clientName}`;
-        //         partCarSelect.appendChild(opt);
-        //     }
-        // }
 
         // Обработчики модального окна
         uiButton.addEventListener('click', () => modal.classList.add('show'));
@@ -793,74 +666,7 @@
     });
 });
 
-        // carForm.addEventListener('submit', function (e) {
-        //     e.preventDefault();
-        //     const vin = document.getElementById('carVin').value.trim().toUpperCase();
-        //     if (vin.length !== 17) {
-        //         alert('VIN должен быть 17 символов');
-        //         return;
-        //     }
-
-        //     const carData = {
-        //         vin: vin,
-        //         brand: document.getElementById('carBrand').value,
-        //         model: document.getElementById('carModel')?.value || '',
-        //         engine: document.getElementById('carEngine')?.value || '',
-        //         year: parseInt(document.getElementById('carYear').value),
-        //         plate: document.getElementById('carPlate').value,
-        //         owner_id: document.getElementById('carOwner').value,
-        //         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        //     };
-
-        //     // Добавляем машину с автоматическим ID
-        //     db.collection('vehicles').add(carData)
-        //         .then(docRef => {
-        //             const vehicleId = docRef.id; // ✅ Уникальный ID от Firebase
-
-        //             // Привязываем к клиенту
-        //             const ownerId = carData.owner_id;
-        //             db.collection('clients').doc(ownerId).update({
-        //                 cars: firebase.firestore.FieldValue.arrayUnion(vehicleId)
-        //             }).catch(err => {
-        //                 console.warn("Не удалось обновить клиента:", err);
-        //             });
-
-        //             alert('✅ Машина добавлена!');
-        //             modal.classList.remove('show');
-        //             loadAndRender();
-        //         })
-        //         .catch(err => alert('❌ Ошибка: ' + err.message));
-        // });
-
-        // carForm.addEventListener('submit', function (e) {
-        //     e.preventDefault();
-        //     const vin = document.getElementById('carVin').value.trim().toUpperCase();
-        //     if (vin.length !== 17) {
-        //         alert('VIN должен быть 17 символов');
-        //         return;
-        //     }
-        //     const carData = {
-        //         vin: vin,
-        //         brand: document.getElementById('carBrand').value,
-        //         model: document.getElementById('carModel')?.value || '',
-        //         engine: document.getElementById('carEngine')?.value || '',
-        //         year: parseInt(document.getElementById('carYear').value),
-        //         plate: document.getElementById('carPlate').value,
-        //         owner_id: document.getElementById('carOwner').value,
-        //         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        //     };
-        //     db.collection('vehicles').doc(vin).set(carData)
-        //         .then(() => {
-        //             const ownerId = carData.owner_id;
-        //             db.collection('clients').doc(ownerId).update({
-        //                 cars: firebase.firestore.FieldValue.arrayUnion(vin)
-        //             }).catch(() => { });
-        //             alert('✅ Машина добавлена!');
-        //             modal.classList.remove('show');
-        //             loadAndRender();
-        //         })
-        //         .catch(err => alert('❌ Ошибка: ' + err.message));
-        // });
+        
 
         partForm.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -917,7 +723,50 @@
         });
 
         // Загружаем данные при старте
-        document.addEventListener('DOMContentLoaded', loadAndRender);
+        // document.addEventListener('DOMContentLoaded', loadAndRender);
+
+        // === АВТОРИЗАЦИЯ (без слома DOM) ===
+document.addEventListener('DOMContentLoaded', () => {
+    const loginBtn = document.getElementById('loginBtn');
+    const authContainer = document.getElementById('authContainer');
+    const uiButton = document.getElementById('uiButton');
+    const userEmail = document.getElementById('userEmail');
+
+    if (!loginBtn || !authContainer || !uiButton) return;
+
+    const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    loginBtn.onclick = () => {
+        auth.signInWithPopup(provider).catch(alert);
+    };
+
+    // Скрываем UI-кнопку, показываем вход
+    uiButton.style.display = 'none';
+    authContainer.style.display = 'flex';
+    authContainer.style.alignItems = 'center';
+    authContainer.style.gap = '10px';
+
+    auth.onAuthStateChanged(user => {
+    if (user) {
+        // Пользователь вошёл
+        authContainer.style.display = 'none';
+        uiButton.style.display = 'block';
+        if (userEmail) userEmail.textContent = user.email || '';
+        loadAndRender(); // ← Грузим данные ТОЛЬКО после входа
+    } else {
+        // Пользователь не авторизован
+        uiButton.style.display = 'none';
+        authContainer.style.display = 'flex';
+        // Очищаем интерфейс
+        clientsContainer.innerHTML = '';
+        partsList.innerHTML = '';
+        content.querySelector('.content-header').textContent = 'Выберите автомобиль';
+    }
+});
+
+});
+
     </script>
 
 </body>
