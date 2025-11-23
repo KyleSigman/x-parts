@@ -188,7 +188,8 @@
             justify-content: center;
             align-items: start;
             z-index: 1000;
-            overflow-y: auto;       /* ← скролл внутри модалки */
+            overflow-y: auto;
+            /* ← скролл внутри модалки */
         }
 
         .modal.show {
@@ -204,7 +205,7 @@
             padding: 20px;
             position: relative;
             margin-bottom: 50px;
-            
+
         }
 
         .close-btn {
@@ -367,11 +368,6 @@
                 <option value="part">🔧 Запчасть</option>
                 <option value="compat">🔩 Группы совместимости</option> <!-- НОВАЯ СТРОКА -->
             </select>
-            <!-- <div class="tabs">
-                <div class="tab active" data-tab="driver">Водитель</div>
-                <div class="tab" data-tab="car">Машина</div>
-                <div class="tab" data-tab="part">Запчасть</div>
-            </div> -->
 
             <!-- Форма водителя -->
             <form class="form active" id="driverForm">
@@ -381,96 +377,130 @@
                 </div>
                 <div class="form-group">
                     <label for="driverContact">Контактное лицо</label>
-                    <input type="text" id="driverContact" required>
+                    <input type="text" id="driverContact"> <!-- ← убрано required -->
                 </div>
                 <div class="form-group">
                     <label for="driverPhone">Телефон</label>
-                    <input type="tel" id="driverPhone" required>
+                    <input type="tel" id="driverPhone"> <!-- ← убрано required -->
                 </div>
                 <button type="submit" class="submit-btn">Добавить водителя</button>
             </form>
 
             <!-- Форма машины -->
-            <form class="form" id="carForm">
+            <!-- Форма машины -->
+<form class="form" id="carForm">
+    <div class="form-group">
+        <label for="carBrand">Бренд</label>
+        <input type="text" id="carBrand">
+    </div>
+    <div class="form-group">
+        <label for="carVin">VIN</label>
+        <input type="text" id="carVin" required> <!-- ✅ остаётся обязательным -->
+        <div id="vinPreview" style="margin-top:8px; padding:8px; background:#f0f8ff; border-radius:4px; font-size:0.9em; display:none;"></div>
+    </div>
+    <div class="form-group">
+        <label for="carModel">Модель</label>
+        <input type="text" id="carModel">
+    </div>
+    <div class="form-group">
+        <label for="carEngine">Двигатель</label>
+        <input type="text" id="carEngine">
+    </div>
+    <div class="form-group">
+        <label for="carYear">Год выпуска</label>
+        <input type="number" id="carYear" min="1990" max="2030">
+    </div>
+    <div class="form-group">
+        <label for="carPlate">Гос. номер</label>
+        <input type="text" id="carPlate">
+    </div>
+    <div class="form-group">
+        <label for="carOwner">Владелец</label>
+        <select id="carOwner" required>
+            <!-- Опции динамически -->
+        </select>
+    </div>
+    <button type="submit" class="submit-btn">Добавить машину</button>
+</form>
+            <!-- <form class="form" id="carForm">
                 <div class="form-group">
-                  <label for="carBrand">Бренд</label>
-                  <input type="text" id="carBrand" required>
+                    <label for="carBrand">Бренд</label>
+                    <input type="text" id="carBrand"> 
                 </div>
                 <div class="form-group">
-                  <label for="carVin">VIN</label>
-                  <input type="text" id="carVin" required>
-                  <div id="vinPreview" style="margin-top: 8px; padding: 8px; background: #f0f8ff; border-radius: 4px; font-size: 0.9em; display: none;"></div>
+                    <label for="carVin">VIN</label>
+                    <input type="text" id="carVin" required> 
+                    <div id="vinPreview" style="margin-top:8px; padding:8px; background:#f0f8ff; border-radius:4px; font-size:0.9em; display:none;"></div>
                 </div>
+                <div class="form-group">
+                    <label for="carModel">Модель</label>
+                    <input type="text" id="carModel"> 
+                </div>
+                <div class="form-group">
+                    <label for="carEngine">Двигатель</label>
+                    <input type="text" id="carEngine"> 
+                </div>
+                <div class="form-group">
+                    <label for="carYear">Год выпуска</label>
+                    <input type="number" id="carYear" min="1990" max="2024"> 
+                </div>
+                <div class="form-group">
+                    <label for="carPlate">Гос. номер</label>
+                    <input type="text" id="carPlate"> 
+                </div>
+                <div class="form-group">
+                    <label for="carOwner">Владелец</label>
+                    <select id="carOwner" required> 
 
-                <div class="form-group">
-                  <label for="carModel">Модель</label>
-                  <input type="text" id="carModel">
-                </div>
-                <div class="form-group">
-                  <label for="carEngine">Двигатель</label>
-                  <input type="text" id="carEngine">
-                </div>
-
-                <div class="form-group">
-                  <label for="carYear">Год выпуска</label>
-                  <input type="number" id="carYear" min="1990" max="2024" required>
-                </div>
-                <div class="form-group">
-                  <label for="carPlate">Гос. номер</label>
-                  <input type="text" id="carPlate" required>
-                </div>
-                <div class="form-group">
-                  <label for="carOwner">Владелец</label>
-                  <select id="carOwner" required>
-                    <!-- Опции будут добавляться динамически -->
-                  </select>
+                    </select>
                 </div>
                 <button type="submit" class="submit-btn">Добавить машину</button>
-              </form>
+            </form> -->
 
             <!-- Форма запчасти -->
             <form class="form" id="partForm">
                 <div class="form-group">
                     <label for="partArticle">Артикул</label>
-                    <input type="text" id="partArticle" required>
+                    <input type="text" id="partArticle" required> <!-- ✅ остаётся -->
                 </div>
                 <div class="form-group">
                     <label for="partName">Наименование</label>
-                    <input type="text" id="partName" required>
+                    <input type="text" id="partName"> <!-- ← убрано required -->
                 </div>
                 <div class="form-group">
                     <label for="partBrand">Бренд</label>
-                    <input type="text" id="partBrand" required>
+                    <input type="text" id="partBrand"> <!-- ← убрано required -->
                 </div>
                 <div class="form-group">
                     <label for="partCar">Совместимость</label>
-                    <select id="partCar" required>
-                        <!-- Опции будут добавляться динамически -->
+                    <select id="partCar"> <!-- ← убрано required -->
+                        <!-- Опции -->
                     </select>
                 </div>
                 <button type="submit" class="submit-btn">Добавить запчасть</button>
             </form>
+
             <!-- Форма одной группы совместимости -->
             <form class="form" id="compatForm">
                 <div class="form-group">
                     <label>ID группы (латиница, без пробелов)</label>
-                    <input type="text" id="compatId" placeholder="howo_t5g_mc07" required>
+                    <input type="text" id="compatId" placeholder="howo_t5g_mc07" required> <!-- ✅ обязательный -->
                 </div>
                 <div class="form-group">
                     <label>Название (для отображения)</label>
-                    <input type="text" id="compatName" placeholder="HOWO T5G (MC07)" required>
+                    <input type="text" id="compatName" placeholder="HOWO T5G (MC07)" required> <!-- ✅ -->
                 </div>
                 <div class="form-group">
                     <label>Бренд</label>
-                    <input type="text" id="compatBrand" placeholder="HOWO / SINOTRUK" required>
+                    <input type="text" id="compatBrand" placeholder="HOWO / SINOTRUK" required> <!-- ✅ -->
                 </div>
                 <div class="form-group">
                     <label>Модель</label>
-                    <input type="text" id="compatModel" placeholder="T5G">
+                    <input type="text" id="compatModel" placeholder="T5G"> <!-- ок -->
                 </div>
                 <div class="form-group">
                     <label>Двигатель</label>
-                    <input type="text" id="compatEngine" placeholder="MC07">
+                    <input type="text" id="compatEngine" placeholder="MC07"> <!-- ок -->
                 </div>
                 <button type="submit" class="submit-btn">Добавить группу</button>
             </form>
@@ -503,12 +533,12 @@
 
         const WMI_MAP = {
             "LZZ": {
-    "brand": "HOWO / SINOTRUK", "models": {
-        "5CL": "C7H", "5BP": "T7H", "5BR": "T5G", "1LC": "TH7", "1LD": "TX", "5CA": "A7",
-        "5DY": "T5G",  // ← ИСПРАВЛЕНО
-        "CL1D": "C7H", "CL2D": "C7H", "BL1D": "T7H", "BR1D": "T5G", "BR2D": "T5G"
-    }
-},
+                "brand": "HOWO / SINOTRUK", "models": {
+                    "5CL": "C7H", "5BP": "T7H", "5BR": "T5G", "1LC": "TH7", "1LD": "TX", "5CA": "A7",
+                    "5DY": "T5G",  // ← ИСПРАВЛЕНО
+                    "CL1D": "C7H", "CL2D": "C7H", "BL1D": "T7H", "BR1D": "T5G", "BR2D": "T5G"
+                }
+            },
 
             "LZW": {
                 "brand": "HOWO", "models": {
@@ -517,7 +547,7 @@
             },
             "LVB": {
                 "brand": "FOTON", "models": {
-                    "4LA": "Auman", "4LB": "Aumark", "4LC": "Aumark S", "BJ4189": "Auman", "EST-A": "Auman"
+                    "4LA": "Auman", "4LB": "Aumark", "4LC": "Aumark S", "BJ4189": "Auman", "S6P": "Auman EST" 
                 }
             },
             "LFC": {
@@ -550,20 +580,20 @@
                     "5NA": "V3", "5NB": "NG80", "ZZ3327": "V3"
                 }
             },
-               // Новый блок для LGA
-    "LGA": {
-        "brand": "HOWO / SINOTRUK",
-        "models": {
-            "G3D": "T7H",      // Пример: из VIN LGAG3DV21P8836707 → G3D → T7H
-            "V21": "C7H",     // Примерное соответствие (уточнить по каталогу)
-            "P88": "A7",    // Примерное соответствие
-            // Добавить другие коды моделей по необходимости
-            "5CL": "C7H",
-            "5BP": "T7H",
-            "5BR": "T5G",
-            "5CA": "A7"
-        }
-    }
+            // Новый блок для LGA
+            "LGA": {
+                "brand": "HOWO / SINOTRUK",
+                "models": {
+                    "G3D": "T7H",      // Пример: из VIN LGAG3DV21P8836707 → G3D → T7H
+                    "V21": "C7H",     // Примерное соответствие (уточнить по каталогу)
+                    "P88": "A7",    // Примерное соответствие
+                    // Добавить другие коды моделей по необходимости
+                    "5CL": "C7H",
+                    "5BP": "T7H",
+                    "5BR": "T5G",
+                    "5CA": "A7"
+                }
+            }
         };
 
         const YEAR_CODES = {
@@ -575,56 +605,57 @@
         };
 
         function decodeVIN(vin) {
-                vin = vin.trim().toUpperCase();
-                const preview = { valid: false, brand: '', model: '', engine: '', year: null, serial: '' };
+            vin = vin.trim().toUpperCase();
+            const preview = { valid: false, brand: '', model: '', engine: '', year: null, serial: '' };
 
-                const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
-                if (!vinRegex.test(vin)) {
-                    return preview;
-                }
-
-                const wmi = vin.substring(0, 3);
-                const vds = vin.substring(3, 8);
-                const yearCode = vin.charAt(9);
-                const serial = vin.substring(11);
-
-                const brandInfo = WMI_MAP[wmi] || { brand: "Неизвестен", models: {} };
-                preview.brand = brandInfo.brand;
-                preview.year = YEAR_CODES[yearCode] || null;
-                preview.serial = serial;
-                preview.valid = true;
-
-                // Определяем модель
-                preview.model = "Неизвестна";
-                for (const [code, modelName] of Object.entries(brandInfo.models)) {
-                    if (vds.startsWith(code)) {
-                        preview.model = modelName;
-                        break;
-                    }
-                }
-
-                // Определяем двигатель ПО МОДЕЛИ
-                const MODEL_TO_ENGINE = {
-                    "T5G": "MC07", "T7H": "MC11", "C7H": "MC11", "TH7": "MC11", "TX": "WP10", "A7": "WP10",
-                    "J6": "WP10", "J7": "WP12", "J6P": "WP13",
-                    "Auman": "WP12", "Aumark": "WP10",
-                    "X3000": "WP10", "X6000": "WP12", "F3000": "WD615",
-                    "Tianjin": "WD615", "KL": "WP10",
-                    "M3000": "WP10"
-                };
-
-                if (preview.model !== "Неизвестна") {
-                    preview.engine = MODEL_TO_ENGINE[preview.model] || "";
-                }
-
+            const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
+            if (!vinRegex.test(vin)) {
                 return preview;
             }
 
-        
+            const wmi = vin.substring(0, 3);
+            const vds = vin.substring(3, 8);
+            const yearCode = vin.charAt(9);
+            const serial = vin.substring(11);
+
+            const brandInfo = WMI_MAP[wmi] || { brand: "Неизвестен", models: {} };
+            preview.brand = brandInfo.brand;
+            preview.year = YEAR_CODES[yearCode] || null;
+            preview.serial = serial;
+            preview.valid = true;
+
+            // Определяем модель
+            preview.model = "Неизвестна";
+            for (const [code, modelName] of Object.entries(brandInfo.models)) {
+                if (vds.startsWith(code)) {
+                    preview.model = modelName;
+                    break;
+                }
+            }
+
+            // Определяем двигатель ПО МОДЕЛИ
+
+            const MODEL_TO_ENGINE = {
+                "T5G": "MC07", "T7H": "MC11", "C7H": "MC11", "TH7": "MC11", "TX": "WP10", "A7": "WP10",
+                "J6": "WP10", "J7": "WP12", "J6P": "WP13",
+                "Auman": "WP12", "Auman EST": "WP12", "Aumark": "WP10",
+                "X3000": "WP10", "X6000": "WP12", "F3000": "WD615",
+                "Tianjin": "WD615", "KL": "WP10",
+                "M3000": "WP10"
+            };
+
+            if (preview.model !== "Неизвестна") {
+                preview.engine = MODEL_TO_ENGINE[preview.model] || "";
+            }
+
+            return preview;
+        }
+
+
 
         // Обработчик ввода VIN
         document.getElementById('carVin').addEventListener('input', function () {
-        // document.getElementById('carVin').addEventListener('blur', function () {
+            // document.getElementById('carVin').addEventListener('blur', function () {
             const vin = this.value;
             const previewDiv = document.getElementById('vinPreview');
 
@@ -643,8 +674,8 @@
             // Автозаполнение полей
             if (decoded.brand) document.getElementById('carBrand').value = decoded.brand;
             if (decoded.model !== "Неизвестна") {
-    document.getElementById('carModel').value = decoded.model;
-}
+                document.getElementById('carModel').value = decoded.model;
+            }
             const engineInput = document.getElementById('carEngine');
             if (decoded.engine && engineInput && engineInput.value === '') {
                 engineInput.value = decoded.engine;
@@ -1072,6 +1103,7 @@
 
         // Обработчики модального окна
         uiButton.addEventListener('click', () => modal.classList.add('show'));
+        
         closeModal.addEventListener('click', () => modal.classList.remove('show'));
 
         document.getElementById('formSelector').addEventListener('change', function () {
@@ -1091,6 +1123,7 @@
         // });
 
         // === Обработчики форм (остаются как были) ===
+        
         driverForm.addEventListener('submit', function (e) {
             e.preventDefault();
             const clientId = 'client_' + Date.now();
@@ -1113,44 +1146,90 @@
         });
 
         carForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const vin = document.getElementById('carVin').value.trim().toUpperCase();
-            if (vin.length !== 17) {
-                alert('VIN должен быть 17 символов');
-                return;
+    e.preventDefault();
+    
+    let vin = document.getElementById('carVin').value.trim().toUpperCase();
+    if (!vin) {
+        alert('VIN обязателен');
+        return;
+    }
+
+    // Генерируем уникальный ID, если VIN короче 5 символов (например, введено "12345")
+    const useAsId = vin.length >= 5 ? vin : 'manual_' + Date.now();
+
+    // Проверяем существование по ID (не только по 17-символьному VIN)
+    db.collection('vehicles').doc(useAsId).get().then(doc => {
+        if (doc.exists) {
+            alert('❌ Машина с таким VIN (или ID) уже существует');
+            return;
+        }
+
+        const carData = {
+            vin: vin, // сохраняем оригинальный ввод
+            brand: document.getElementById('carBrand').value.trim(),
+            model: document.getElementById('carModel').value.trim(),
+            engine: document.getElementById('carEngine').value.trim(),
+            year: parseInt(document.getElementById('carYear').value) || null,
+            plate: document.getElementById('carPlate').value.trim(),
+            owner_id: document.getElementById('carOwner').value,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        db.collection('vehicles').doc(useAsId).set(carData).then(() => {
+            // Привязка к клиенту
+            if (carData.owner_id) {
+                db.collection('clients').doc(carData.owner_id).update({
+                    cars: firebase.firestore.FieldValue.arrayUnion(useAsId)
+                }).catch(() => {});
             }
-
-            // Проверяем, существует ли уже
-            db.collection('vehicles').doc(vin).get().then(doc => {
-                if (doc.exists) {
-                    alert('❌ Машина с таким VIN уже есть');
-                    return;
-                }
-
-                const carData = {
-                    vin: vin,
-                    brand: document.getElementById('carBrand').value,
-                    model: document.getElementById('carModel')?.value || '',
-                    engine: document.getElementById('carEngine')?.value || '',
-                    year: parseInt(document.getElementById('carYear').value),
-                    plate: document.getElementById('carPlate').value,
-                    owner_id: document.getElementById('carOwner').value,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                db.collection('vehicles').doc(vin).set(carData).then(() => {
-                    // Привязываем к клиенту
-                    db.collection('clients').doc(carData.owner_id).update({
-                        cars: firebase.firestore.FieldValue.arrayUnion(vin)
-                    }).catch(() => { });
-                    alert('✅ Машина добавлена');
-                    this.reset(); // ← ОЧИСТКА ФОРМЫ
-                    modal.classList.remove('show');
-                    loadAndRender();
-                });
-            });
+            alert('✅ Машина добавлена');
+            this.reset();
+            modal.classList.remove('show');
+            loadAndRender();
+        }).catch(err => {
+            alert('❌ Ошибка сохранения: ' + err.message);
         });
+    });
+});
 
+        // carForm.addEventListener('submit', function (e) {
+        //     e.preventDefault();
+        //     const vin = document.getElementById('carVin').value.trim().toUpperCase();
+        //     if (vin.length !== 17) {
+        //         alert('VIN должен быть 17 символов');
+        //         return;
+        //     }
+
+        //     // Проверяем, существует ли уже
+        //     db.collection('vehicles').doc(vin).get().then(doc => {
+        //         if (doc.exists) {
+        //             alert('❌ Машина с таким VIN уже есть');
+        //             return;
+        //         }
+
+        //         const carData = {
+        //             vin: vin,
+        //             brand: document.getElementById('carBrand').value,
+        //             model: document.getElementById('carModel')?.value || '',
+        //             engine: document.getElementById('carEngine')?.value || '',
+        //             year: parseInt(document.getElementById('carYear').value),
+        //             plate: document.getElementById('carPlate').value,
+        //             owner_id: document.getElementById('carOwner').value,
+        //             timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        //         };
+
+        //         db.collection('vehicles').doc(vin).set(carData).then(() => {
+        //             // Привязываем к клиенту
+        //             db.collection('clients').doc(carData.owner_id).update({
+        //                 cars: firebase.firestore.FieldValue.arrayUnion(vin)
+        //             }).catch(() => { });
+        //             alert('✅ Машина добавлена');
+        //             this.reset(); // ← ОЧИСТКА ФОРМЫ
+        //             modal.classList.remove('show');
+        //             loadAndRender();
+        //         });
+        //     });
+        // });
 
         partForm.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -1175,7 +1254,7 @@
                 .catch(err => alert('❌ Ошибка: ' + err.message));
         });
 
-   
+
         document.getElementById('compatForm').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -1206,6 +1285,7 @@
                     alert('❌ Ошибка: ' + err.message);
                 });
         });
+        
         document.getElementById('exportJsonBtn').addEventListener('click', async () => {
             const exportData = { parts: {}, vehicles: {}, clients: {}, compatibility: {} };
             const collections = ['parts', 'vehicles', 'clients', 'compatibility'];
