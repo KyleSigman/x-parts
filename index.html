@@ -23,7 +23,19 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
     </script>
-
+<style>
+        .garage-btn {
+      position: absolute;
+      right: 100px;
+      top: 10px;
+      padding: 10px 15px;
+      background: #0080ff1b;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      z-index: 1000;
+    }
+      </style>
     <style>
         /* Общие стили */
         * {
@@ -335,7 +347,7 @@
         <div class="header-title">x-parts гараж</div>
         <button class="ui-button" id="uiButton">⚙️</button>
     </header>
-
+<a href="TRUKSPRO.html" class="garage-btn">система</a>
     <!-- Основной контейнер -->
     <div class="container">
         <!-- Левая колонка -->
@@ -1225,3 +1237,4 @@
 </body>
 
 </html>
+
