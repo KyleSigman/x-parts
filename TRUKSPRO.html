@@ -1,239 +1,243 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>🚛 Редактор справочника</title>
-  <style>
-    /* СТИЛИ */
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f9f9fb;
-      color: #333;
-      line-height: 1.6;
-      padding: 20px;
-      margin: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🚛 Редактор справочника</title>
+    <style>
+        /* СТИЛИ */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9fb;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    h1 {
-        
-        font-size: 20px;
-      text-align: center;
-      margin-bottom: 30px;
-      color: #2c3e50;
-    }
+        h1 {
 
-    .sections {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      margin-bottom: 30px;
-    }
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
 
-    @media (max-width: 768px) {
-      .sections {
-        grid-template-columns: 1fr;
-      }
-    }
+        .sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
 
-    .section {
-      background: white;
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    }
+        @media (max-width: 768px) {
+            .sections {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .section h2 {
-      color: #2c3e50;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #eee;
-    }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
 
-    .wmi-block {
-      margin-bottom: 25px;
-      padding-bottom: 20px;
-      border-bottom: 1px dashed #eee;
-    }
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
 
-    .pair-line {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 8px;
-    }
+        .wmi-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
 
-    .editable {
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 2px solid transparent;
-      min-width: 80px;
-      text-align: center;
-      font-weight: 600;
-    }
+        .pair-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
 
-    .key {
-      background: white;
-      border: 2px solid #6c757d;
-      color: #495057;
-    }
+        .editable {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            min-width: 80px;
+            text-align: center;
+            font-weight: 600;
+        }
 
-    .value-brand {
-      background: #e74c3c;
-      color: white;
-      border: 2px solid #e74c3c;
-    }
+        .key {
+            background: white;
+            border: 2px solid #6c757d;
+            color: #495057;
+        }
 
-    .value-model {
-      background: #2980b9;
-      color: white;
-      border: 2px solid #2980b9;
-    }
+        .value-brand {
+            background: #e74c3c;
+            color: white;
+            border: 2px solid #e74c3c;
+        }
 
-    .value-engine {
-      background: #27ae60;
-      color: white;
-      border: 2px solid #27ae60;
-    }
+        .value-model {
+            background: #2980b9;
+            color: white;
+            border: 2px solid #2980b9;
+        }
 
-    input {
-      padding: 6px 12px;
-      border: 2px solid #4a6fa5;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 600;
-      min-width: 80px;
-      text-align: center;
-    }
+        .value-engine {
+            background: #27ae60;
+            color: white;
+            border: 2px solid #27ae60;
+        }
 
-    .mini-form {
-        max-width: 80vw;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 10px 0;
-      padding: 10px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      border: 2px dashed #dee2e6;
-    }
-    .mini-form input {
-  max-width: 50px;
-}
-    .form-actions {
-      display: flex;
-      gap: 5px;
-    }
+        input {
+            padding: 6px 12px;
+            border: 2px solid #4a6fa5;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
 
-    .btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+        .mini-form {
+            max-width: 80vw;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
 
-    .btn-success {
-      background: #28a745;
-      color: white;
-    }
+        .mini-form input {
+            max-width: 50px;
+        }
 
-    .btn-danger {
-      background: #dc3545;
-      color: white;
-    }
+        .form-actions {
+            display: flex;
+            gap: 5px;
+        }
 
-    .add-btn {
-      background: #17a2b8;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 8px 16px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-      margin-top: 10px;
-    }
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
-    .models-list {
-      margin-top: 15px;
-      padding-left: 20px;
-      border-left: 2px dashed #dee2e6;
-    }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
 
-    .engine-group {
-      margin-bottom: 15px;
-      padding: 15px;
-      background: #f8f9fa;
-      border-radius: 8px;
-    }
-  </style>
-  <style>
-    .editable {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
 
-.editable:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
+        .add-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
 
-.edit-input {
-  padding: 4px 8px;
-  border: 2px solid #4a6fa5;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  max-width: 50px;
-  text-align: center;
-}
+        .models-list {
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 2px dashed #dee2e6;
+        }
 
-  </style>
-  <style>
-    .garage-btn {
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  padding: 10px 15px;
-  background: #2c3e50;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  z-index: 1000;
-}
-  </style>
+        .engine-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+    </style>
+    <style>
+        .editable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .editable:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .edit-input {
+            padding: 4px 8px;
+            border: 2px solid #4a6fa5;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            max-width: 50px;
+            text-align: center;
+        }
+    </style>
+    <style>
+        .garage-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            padding: 10px 15px;
+            background: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            z-index: 1000;
+        }
+    </style>
+
 </head>
+
 <body>
-  <div class="container">
-    <h1>🚛 TRUCK SYSTEM</h1>
-    <a href="index.html" class="garage-btn">В гараж</a>
-    
-    <div class="sections">
-      <!-- Бренды и модели -->
-      <div class="section">
-        <h2>🏭 Бренды и модели</h2>
-        <div id="brands-container"></div>
-      </div>
+    <div class="container">
+        <h1>🚛 TRUCK SYSTEM</h1>
+        <a href="index.html" class="garage-btn">В гараж</a>
 
-      <!-- Двигатели -->
-      <div class="section">
-        <h2>⚙️ Двигатели и модели</h2>
-        <div id="engines-container"></div>
-      </div>
+        <div class="sections">
+            <!-- Бренды и модели -->
+            <div class="section">
+                <h2>🏭 Бренды и модели</h2>
+                <div id="brands-container"></div>
+            </div>
+
+            <!-- Двигатели -->
+            <div class="section">
+                <h2>⚙️ Двигатели и модели</h2>
+                <div id="engines-container"></div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  
-  <script>
-    const firebaseConfig = {
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
             apiKey: "AIzaSyCVr3ZztynpNzkeFY3aLKFN777oPunon4o",
             authDomain: "inspector-24f9b.firebaseapp.com",
             databaseURL: "https://inspector-24f9b-default-rtdb.europe-west1.firebasedatabase.app",
@@ -243,18 +247,18 @@
             appId: "1:590955045913:web:164311eb98caeca7643688"
         };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    let WMI_MAP = {};
-    let MODEL_TO_ENGINE = {};
+        let WMI_MAP = {};
+        let MODEL_TO_ENGINE = {};
 
-    // === Мини-форма для добавления пар ===
-    function createMiniForm(container, onSave, onCancel) {
-      const form = document.createElement('div');
-      form.className = 'mini-form';
-      
-      form.innerHTML = `
+        // === Мини-форма для добавления пар ===
+        function createMiniForm(container, onSave, onCancel) {
+            const form = document.createElement('div');
+            form.className = 'mini-form';
+
+            form.innerHTML = `
         <input type="text" placeholder="код" class="key-input">
         <span>→</span>
         <input type="text" placeholder="значение" class="value-input">
@@ -264,74 +268,74 @@
         </div>
       `;
 
-      const keyInput = form.querySelector('.key-input');
-      const valueInput = form.querySelector('.value-input');
-      const saveBtn = form.querySelector('.btn-success');
-      const cancelBtn = form.querySelector('.btn-danger');
+            const keyInput = form.querySelector('.key-input');
+            const valueInput = form.querySelector('.value-input');
+            const saveBtn = form.querySelector('.btn-success');
+            const cancelBtn = form.querySelector('.btn-danger');
 
-      saveBtn.onclick = () => {
-        const key = keyInput.value.trim();
-        const value = valueInput.value.trim();
-        if (key && value) {
-          onSave(key, value);
+            saveBtn.onclick = () => {
+                const key = keyInput.value.trim();
+                const value = valueInput.value.trim();
+                if (key && value) {
+                    onSave(key, value);
+                }
+            };
+
+            cancelBtn.onclick = onCancel;
+
+            container.appendChild(form);
+            keyInput.focus();
         }
-      };
 
-      cancelBtn.onclick = onCancel;
+        // === Функция редактирования поля ===
+        function makeEditable(element, onSave) {
+            const originalValue = element.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = originalValue;
+            input.className = 'edit-input';
 
-      container.appendChild(form);
-      keyInput.focus();
-    }
+            // Сохраняем оригинальные стили
+            const originalClasses = element.className;
 
-    // === Функция редактирования поля ===
-function makeEditable(element, onSave) {
-  const originalValue = element.textContent;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.value = originalValue;
-  input.className = 'edit-input';
-  
-  // Сохраняем оригинальные стили
-  const originalClasses = element.className;
-  
-  // Заменяем элемент на input
-  element.parentNode.replaceChild(input, element);
-  input.focus();
-  input.select();
+            // Заменяем элемент на input
+            element.parentNode.replaceChild(input, element);
+            input.focus();
+            input.select();
 
-  function save() {
-    const newValue = input.value.trim();
-    if (newValue && newValue !== originalValue) {
-      onSave(newValue);
-    } else {
-      cancel();
-    }
-  }
+            function save() {
+                const newValue = input.value.trim();
+                if (newValue && newValue !== originalValue) {
+                    onSave(newValue);
+                } else {
+                    cancel();
+                }
+            }
 
-  function cancel() {
-    input.parentNode.replaceChild(element, input);
-    element.textContent = originalValue;
-    element.className = originalClasses;
-  }
+            function cancel() {
+                input.parentNode.replaceChild(element, input);
+                element.textContent = originalValue;
+                element.className = originalClasses;
+            }
 
-  input.addEventListener('blur', save);
-  input.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') save();
-    if (e.key === 'Escape') cancel();
-  });
-}
+            input.addEventListener('blur', save);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') save();
+                if (e.key === 'Escape') cancel();
+            });
+        }
 
-// === Рендер брендов с редактированием ===
-function renderBrands() {
-  const container = document.getElementById('brands-container');
-  container.innerHTML = '';
+        // === Рендер брендов с редактированием ===
+        function renderBrands() {
+            const container = document.getElementById('brands-container');
+            container.innerHTML = '';
 
-  for (const [wmi, data] of Object.entries(WMI_MAP)) {
-    const wmiBlock = document.createElement('div');
-    wmiBlock.className = 'wmi-block';
+            for (const [wmi, data] of Object.entries(WMI_MAP)) {
+                const wmiBlock = document.createElement('div');
+                wmiBlock.className = 'wmi-block';
 
-    // WMI и бренд
-    wmiBlock.innerHTML = `
+                // WMI и бренд
+                wmiBlock.innerHTML = `
       <div class="pair-line">
         <span class="editable key">${wmi}</span>
         <span>→</span>
@@ -341,119 +345,172 @@ function renderBrands() {
       <button class="add-btn" onclick="addModelToBrand('${wmi}')">+ Добавить модель</button>
     `;
 
-    // Обработчики для редактирования WMI и бренда
-    const wmiElement = wmiBlock.querySelector('.pair-line .key');
-    const brandElement = wmiBlock.querySelector('.pair-line .value-brand');
+                // Обработчики для редактирования WMI и бренда
+                const wmiElement = wmiBlock.querySelector('.pair-line .key');
+                const brandElement = wmiBlock.querySelector('.pair-line .value-brand');
 
-    wmiElement.onclick = () => makeEditable(wmiElement, async (newWmi) => {
-      if (newWmi !== wmi && newWmi) {
-        // Перемещаем данные на новый WMI
-        WMI_MAP[newWmi] = WMI_MAP[wmi];
-        delete WMI_MAP[wmi];
-        await saveToFirebase();
-        renderBrands();
-      }
-    });
+                wmiElement.onclick = () => makeEditable(wmiElement, async (newWmi) => {
+                    if (newWmi !== wmi && newWmi) {
+                        // Перемещаем данные на новый WMI
+                        WMI_MAP[newWmi] = WMI_MAP[wmi];
+                        delete WMI_MAP[wmi];
+                        await saveToFirebase();
+                        renderBrands();
+                    }
+                });
 
-    brandElement.onclick = () => makeEditable(brandElement, async (newBrand) => {
-      if (newBrand) {
-        WMI_MAP[wmi].brand = newBrand;
-        await saveToFirebase();
-        renderBrands();
-      }
-    });
+                brandElement.onclick = () => makeEditable(brandElement, async (newBrand) => {
+                    if (newBrand) {
+                        WMI_MAP[wmi].brand = newBrand;
+                        await saveToFirebase();
+                        renderBrands();
+                    }
+                });
 
-    // Модели
-        // Модели
-    const modelsContainer = wmiBlock.querySelector(`#models-${wmi}`);
-    for (const [code, model] of Object.entries(data.models)) {
-      const modelLine = document.createElement('div');
-      modelLine.className = 'pair-line';
-      modelLine.innerHTML = `
+                // Модели
+                // Модели
+                const modelsContainer = wmiBlock.querySelector(`#models-${wmi}`);
+                for (const [code, model] of Object.entries(data.models)) {
+                    const modelLine = document.createElement('div');
+                    modelLine.className = 'pair-line';
+                    modelLine.innerHTML = `
         <span class="editable key">${code}</span>
         <span>→</span>
         <span class="editable value-model">${model}</span>
         <button class="delete-pair-btn">⛔</button>
       `;
 
-      const deleteBtn = modelLine.querySelector('.delete-pair-btn');
-      deleteBtn.onclick = async () => {
-        delete WMI_MAP[wmi].models[code];
-        await saveToFirebase();
-        renderBrands();
-      };
+                    const deleteBtn = modelLine.querySelector('.delete-pair-btn');
+                    deleteBtn.onclick = async () => {
+                        delete WMI_MAP[wmi].models[code];
+                        await saveToFirebase();
+                        renderBrands();
+                    };
 
-      const codeElement = modelLine.querySelector('.key');
-      const modelElement = modelLine.querySelector('.value-model');
+                    const codeElement = modelLine.querySelector('.key');
+                    const modelElement = modelLine.querySelector('.value-model');
 
-      codeElement.onclick = () => makeEditable(codeElement, async (newCode) => {
-        if (newCode && newCode !== code) {
-          const updatedModels = {};
-          for (const [key, value] of Object.entries(WMI_MAP[wmi].models)) {
-            if (key === code) {
-              updatedModels[newCode] = value;
-            } else {
-              updatedModels[key] = value;
+                    codeElement.onclick = () => makeEditable(codeElement, async (newCode) => {
+                        if (newCode && newCode !== code) {
+                            const updatedModels = {};
+                            for (const [key, value] of Object.entries(WMI_MAP[wmi].models)) {
+                                if (key === code) {
+                                    updatedModels[newCode] = value;
+                                } else {
+                                    updatedModels[key] = value;
+                                }
+                            }
+                            WMI_MAP[wmi].models = updatedModels;
+                            await saveToFirebase();
+                            renderBrands();
+                        }
+                    });
+
+                    modelElement.onclick = () => makeEditable(modelElement, async (newModel) => {
+                        if (newModel) {
+                            WMI_MAP[wmi].models[code] = newModel;
+                            await saveToFirebase();
+                            renderBrands();
+                        }
+                    });
+
+                    modelsContainer.appendChild(modelLine);
+                }
+                //     const modelsContainer = wmiBlock.querySelector(`#models-${wmi}`);
+                //     for (const [code, model] of Object.entries(data.models)) {
+                //       const modelLine = document.createElement('div');
+                //       modelLine.className = 'pair-line';
+                //       modelLine.innerHTML = `
+                //         <span class="editable key">${code}</span>
+                //         <span>→</span>
+                //         <span class="editable value-model">${model}</span>
+                //       `;
+
+                //       // Обработчики для редактирования
+                //       const codeElement = modelLine.querySelector('.key');
+                //       const modelElement = modelLine.querySelector('.value-model');
+
+                //       codeElement.onclick = () => makeEditable(codeElement, async (newCode) => {
+                //   if (newCode && newCode !== code) {
+                //     // Создаем новый объект моделей без undefined
+                //     const updatedModels = {};
+                //     for (const [key, value] of Object.entries(WMI_MAP[wmi].models)) {
+                //       if (key === code) {
+                //         updatedModels[newCode] = value;
+                //       } else {
+                //         updatedModels[key] = value;
+                //       }
+                //     }
+                //     WMI_MAP[wmi].models = updatedModels;
+                //     await saveToFirebase();
+                //     renderBrands();
+                //   }
+                // });
+                //     //   codeElement.onclick = () => makeEditable(codeElement, async (newCode) => {
+                //     //     if (newCode && newCode !== code) {
+                //     //       // Безопасное обновление кода модели
+                //     //       const modelValue = WMI_MAP[wmi].models[code];
+                //     //       delete WMI_MAP[wmi].models[code];
+                //     //       WMI_MAP[wmi].models[newCode] = modelValue;
+                //     //       await saveToFirebase();
+                //     //       renderBrands();
+                //     //     }
+                //     //   });
+
+                //       modelElement.onclick = () => makeEditable(modelElement, async (newModel) => {
+                //         if (newModel) {
+                //           WMI_MAP[wmi].models[code] = newModel;
+                //           await saveToFirebase();
+                //           renderBrands();
+                //         }
+                //       });
+
+                //       modelsContainer.appendChild(modelLine);
+                //     }
+
+                container.appendChild(wmiBlock);
             }
-          }
-          WMI_MAP[wmi].models = updatedModels;
-          await saveToFirebase();
-          renderBrands();
         }
-      });
+        // === Рендер брендов ===
+        // function renderBrands() {
+        //   const container = document.getElementById('brands-container');
+        //   container.innerHTML = '';
 
-      modelElement.onclick = () => makeEditable(modelElement, async (newModel) => {
-        if (newModel) {
-          WMI_MAP[wmi].models[code] = newModel;
-          await saveToFirebase();
-          renderBrands();
-        }
-      });
+        //   for (const [wmi, data] of Object.entries(WMI_MAP)) {
+        //     const wmiBlock = document.createElement('div');
+        //     wmiBlock.className = 'wmi-block';
 
-      modelsContainer.appendChild(modelLine);
-    }
+        //     // WMI и бренд
+        //     wmiBlock.innerHTML = `
+        //       <div class="pair-line">
+        //         <span class="editable key">${wmi}</span>
+        //         <span>→</span>
+        //         <span class="editable value-brand">${data.brand}</span>
+        //       </div>
+        //       <div class="models-list" id="models-${wmi}"></div>
+        //       <button class="add-btn" onclick="addModelToBrand('${wmi}')">+ Добавить модель</button>
+        //     `;
 
-    container.appendChild(wmiBlock);
-  }
-}
-    // === Рендер брендов ===
-    // function renderBrands() {
-    //   const container = document.getElementById('brands-container');
-    //   container.innerHTML = '';
+        //     // Модели
+        //     const modelsContainer = wmiBlock.querySelector(`#models-${wmi}`);
+        //     for (const [code, model] of Object.entries(data.models)) {
+        //       const modelLine = document.createElement('div');
+        //       modelLine.className = 'pair-line';
+        //       modelLine.innerHTML = `
+        //         <span class="editable key">${code}</span>
+        //         <span>→</span>
+        //         <span class="editable value-model">${model}</span>
+        //       `;
+        //       modelsContainer.appendChild(modelLine);
+        //     }
 
-    //   for (const [wmi, data] of Object.entries(WMI_MAP)) {
-    //     const wmiBlock = document.createElement('div');
-    //     wmiBlock.className = 'wmi-block';
+        //     container.appendChild(wmiBlock);
+        //   }
+        // }
 
-    //     // WMI и бренд
-    //     wmiBlock.innerHTML = `
-    //       <div class="pair-line">
-    //         <span class="editable key">${wmi}</span>
-    //         <span>→</span>
-    //         <span class="editable value-brand">${data.brand}</span>
-    //       </div>
-    //       <div class="models-list" id="models-${wmi}"></div>
-    //       <button class="add-btn" onclick="addModelToBrand('${wmi}')">+ Добавить модель</button>
-    //     `;
-
-    //     // Модели
-    //     const modelsContainer = wmiBlock.querySelector(`#models-${wmi}`);
-    //     for (const [code, model] of Object.entries(data.models)) {
-    //       const modelLine = document.createElement('div');
-    //       modelLine.className = 'pair-line';
-    //       modelLine.innerHTML = `
-    //         <span class="editable key">${code}</span>
-    //         <span>→</span>
-    //         <span class="editable value-model">${model}</span>
-    //       `;
-    //       modelsContainer.appendChild(modelLine);
-    //     }
-
-    //     container.appendChild(wmiBlock);
-    //   }
-    // }
-
-    // === Рендер двигателей ===
+        // === Рендер двигателей ===
+        // === Рендер двигателей с редактированием ===
+        
         function renderEngines() {
             const container = document.getElementById('engines-container');
             container.innerHTML = '';
@@ -598,95 +655,177 @@ modelsContainer.appendChild(addModelLine);
             container.appendChild(addBtn);
         }
 
-
-
-    // === Добавление модели к бренду ===
-    function addModelToBrand(wmi) {
-      const modelsContainer = document.getElementById(`models-${wmi}`);
-      
-      createMiniForm(modelsContainer, 
-        async (code, model) => {
-          // Обновляем данные
-          WMI_MAP[wmi].models[code] = model;
-          
-          // Сохраняем в Firebase
-          await saveToFirebase();
-          
-          // Перерендерим
-          renderBrands();
-          renderEngines();
-        },
-        () => {
-          // Отмена - просто удаляем форму
-          modelsContainer.removeChild(modelsContainer.lastChild);
-        }
-      );
-    }
-
-    // === Добавление связки двигатель-модель ===
-    function addEngineLink() {
-      const container = document.getElementById('engines-container');
-      const addBtn = container.querySelector('.add-btn');
-      container.removeChild(addBtn);
-      
-      createMiniForm(container,
-        async (model, engine) => {
-          // Обновляем данные
-          MODEL_TO_ENGINE[model] = engine;
-          
-          // Сохраняем в Firebase
-          await saveToFirebase();
-          
-          // Перерендерим
-          renderEngines();
-        },
-        () => {
-          // Отмена - перерендерим чтобы вернуть кнопку
-          renderEngines();
-        }
-      );
-    }
-
-    // === Сохранение в Firebase ===
-    async function saveToFirebase() {
-      try {
-        await db.collection('TRUCKSYSTEM').doc('reference_data').update({
-          WMI_MAP: WMI_MAP,
-          MODEL_TO_ENGINE: MODEL_TO_ENGINE
-        });
-        console.log('✅ Данные сохранены');
-      } catch (error) {
-        console.error('❌ Ошибка сохранения:', error);
-      }
-    }
-
-    // === Загрузка данных ===
-    async function loadData() {
-      try {
-        const docRef = db.collection('TRUCKSYSTEM').doc('reference_data');
-        const docSnap = await docRef.get();
         
-        if (docSnap.exists) {
-          const data = docSnap.data();
-          WMI_MAP = data.WMI_MAP || {};
-          MODEL_TO_ENGINE = data.MODEL_TO_ENGINE || {};
-          
-          renderBrands();
-          renderEngines();
+        // function renderEngines() {
+        //   const container = document.getElementById('engines-container');
+        //   container.innerHTML = '';
+
+        //   const engineToModels = {};
+        //   for (const [model, engine] of Object.entries(MODEL_TO_ENGINE)) {
+        //     if (!engineToModels[engine]) engineToModels[engine] = [];
+        //     engineToModels[engine].push(model);
+        //   }
+
+        //   for (const [engine, models] of Object.entries(engineToModels)) {
+        //     const engineGroup = document.createElement('div');
+        //     engineGroup.className = 'engine-group';
+
+        //     const engineLine = document.createElement('div');
+        //     engineLine.className = 'pair-line';
+        //     engineLine.innerHTML = `
+        //       <span class="editable value-engine">${engine}</span>
+        //       <span>→</span>
+        //     `;
+
+        //     const modelsContainer = document.createElement('div');
+        //     modelsContainer.className = 'models-container';
+        //     modelsContainer.style.display = 'flex';
+        //     modelsContainer.style.gap = '8px';
+        //     modelsContainer.style.flexWrap = 'wrap';
+        //     modelsContainer.style.alignItems = 'center';
+
+        //     models.sort().forEach(model => {
+        //       const modelSpan = document.createElement('span');
+        //       modelSpan.className = 'editable value-model';
+        //       modelSpan.textContent = model;
+        //       modelSpan.style.cursor = 'pointer';
+        //       modelsContainer.appendChild(modelSpan);
+        //     });
+
+        //     engineLine.appendChild(modelsContainer);
+        //     engineGroup.appendChild(engineLine);
+        //     container.appendChild(engineGroup);
+        //   }
+
+        //   const addBtn = document.createElement('button');
+        //   addBtn.className = 'add-btn';
+        //   addBtn.textContent = '+ Добавить связку';
+        //   addBtn.onclick = addEngineLink;
+        //   container.appendChild(addBtn);
+        // }
+
+        // // === Рендер двигателей ===
+        // function renderEngines() {
+        //   const container = document.getElementById('engines-container');
+        //   container.innerHTML = '';
+
+        //   // Группируем модели по двигателям
+        //   const engineToModels = {};
+        //   for (const [model, engine] of Object.entries(MODEL_TO_ENGINE)) {
+        //     if (!engineToModels[engine]) engineToModels[engine] = [];
+        //     engineToModels[engine].push(model);
+        //   }
+
+        //   // Рендерим группы
+        //   for (const [engine, models] of Object.entries(engineToModels)) {
+        //     const engineGroup = document.createElement('div');
+        //     engineGroup.className = 'engine-group';
+
+        //     engineGroup.innerHTML = `
+        //       <div class="pair-line">
+        //         <span class="editable value-engine">${engine}</span>
+        //         <span>→</span>
+        //         <span>${models.sort().join(', ')}</span>
+        //       </div>
+        //     `;
+
+        //     container.appendChild(engineGroup);
+        //   }
+
+        //   // Кнопка добавления
+        //   const addBtn = document.createElement('button');
+        //   addBtn.className = 'add-btn';
+        //   addBtn.textContent = '+ Добавить связку';
+        //   addBtn.onclick = addEngineLink;
+        //   container.appendChild(addBtn);
+        // }
+
+        // === Добавление модели к бренду ===
+        function addModelToBrand(wmi) {
+            const modelsContainer = document.getElementById(`models-${wmi}`);
+
+            createMiniForm(modelsContainer,
+                async (code, model) => {
+                    // Обновляем данные
+                    WMI_MAP[wmi].models[code] = model;
+
+                    // Сохраняем в Firebase
+                    await saveToFirebase();
+
+                    // Перерендерим
+                    renderBrands();
+                    renderEngines();
+                },
+                () => {
+                    // Отмена - просто удаляем форму
+                    modelsContainer.removeChild(modelsContainer.lastChild);
+                }
+            );
         }
-      } catch (error) {
-        console.error('Ошибка загрузки:', error);
-      }
-    }
 
-    // Глобальные функции
-    window.addModelToBrand = addModelToBrand;
-    window.addEngineLink = addEngineLink;
+        // === Добавление связки двигатель-модель ===
+        function addEngineLink() {
+            const container = document.getElementById('engines-container');
+            const addBtn = container.querySelector('.add-btn');
+            container.removeChild(addBtn);
 
-    // Запуск
-    loadData();
-  </script>
+            createMiniForm(container,
+                async (model, engine) => {
+                    // Обновляем данные
+                    MODEL_TO_ENGINE[model] = engine;
+
+                    // Сохраняем в Firebase
+                    await saveToFirebase();
+
+                    // Перерендерим
+                    renderEngines();
+                },
+                () => {
+                    // Отмена - перерендерим чтобы вернуть кнопку
+                    renderEngines();
+                }
+            );
+        }
+
+        // === Сохранение в Firebase ===
+        async function saveToFirebase() {
+            try {
+                await db.collection('TRUCKSYSTEM').doc('reference_data').update({
+                    WMI_MAP: WMI_MAP,
+                    MODEL_TO_ENGINE: MODEL_TO_ENGINE
+                });
+                console.log('✅ Данные сохранены');
+            } catch (error) {
+                console.error('❌ Ошибка сохранения:', error);
+            }
+        }
+
+        // === Загрузка данных ===
+        async function loadData() {
+            try {
+                const docRef = db.collection('TRUCKSYSTEM').doc('reference_data');
+                const docSnap = await docRef.get();
+
+                if (docSnap.exists) {
+                    const data = docSnap.data();
+                    WMI_MAP = data.WMI_MAP || {};
+                    MODEL_TO_ENGINE = data.MODEL_TO_ENGINE || {};
+
+                    renderBrands();
+                    renderEngines();
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+            }
+        }
+
+        // Глобальные функции
+        window.addModelToBrand = addModelToBrand;
+        window.addEngineLink = addEngineLink;
+
+        // Запуск
+        loadData();
+    </script>
 </body>
 
 </html>
-
