@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>x-parts гараж</title>
-    <a href="TRUKSPRO.html" class="garage-btn">система</a>
+    <a href="TRUKSPRO.html" class="garage-btn">sys</a>
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -331,15 +331,22 @@
       <style>
         .garage-btn {
       position: absolute;
-      right: 100px;
-      top: 10px;
-      padding: 10px 15px;
-      background: #0080ff1b;
+      right: 120px;
+      top: 15px;
+      margin-right: 10px;
+      padding: 5px 15px;
+      background: #c0cdd927;
       color: white;
       text-decoration: none;
       border-radius: 6px;
       z-index: 1000;
+
+
     }
+    .garage-btn:hover
+      {
+        outline: 2px solid white;
+      }
       </style>
       <style>
         .ui-mini-btn:hover {
@@ -355,8 +362,15 @@
     <!-- Верхняя панель -->
     <header>
         <div class="header-title">x-parts гараж</div>
-        <button class="ui-button" id="uiButton">⚙️</button>
+        <div style="display:flex; gap:10px;">
+            <button class="ui-button" id="uiButton">⚙️</button>
+            <button class="ui-button" id="openFeedbackModal">💬</button>
+        </div>
     </header>
+    <!-- <header>
+        <div class="header-title">x-parts гараж</div>
+        <button class="ui-button" id="uiButton">⚙️</button>
+    </header> -->
 
     <!-- Основной контейнер -->
     <div class="container">
@@ -552,6 +566,23 @@
 
         </div>
     </div>
+
+    <!-- Модалка для заметок -->
+<div class="modal" id="feedbackModal" style="z-index: 1100;">
+    <div class="modal-content" style="max-width: 600px; width: 90%;">
+        <button class="close-btn" id="closeFeedbackModal">
+            <span>&times;</span>
+        </button>
+        <h3>📝 Заметки и идеи</h3>
+        <p style="margin:10px 0; color:#666;">Ваши заметки видны только вам и разработчику.</p>
+        <textarea id="feedbackInput" placeholder="Напишите идею, замечание или задачу..." 
+            style="width:100%; height:100px; padding:10px; margin:10px 0; border:1px solid #ccc; border-radius:4px;"></textarea>
+        <button class="submit-btn" id="sendFeedbackBtn" style="width:100%;">Отправить</button>
+        <div id="feedbackList" style="margin-top:20px; max-height:300px; overflow-y:auto; border-top:1px solid #eee; padding-top:10px;">
+            <!-- Сюда будут подгружаться заметки -->
+        </div>
+    </div>
+</div>
 
     <div style="text-align:center; margin-top:20px; display: none;">
         <button id="exportJsonBtn" class="ui-button">📥 Скачать всю базу как JSON</button>
@@ -842,6 +873,32 @@
         fieldsDiv.className = 'client-fields';
         fieldsDiv.style.display = 'none';
         fieldsDiv.style.padding = '10px 0';
+
+        // ДОБАВЛЯЕМ ПОЛЕ "НАЗВАНИЕ" ПЕРВЫМ
+const nameFieldDiv = document.createElement('div');
+nameFieldDiv.style.marginBottom = '8px';
+nameFieldDiv.style.display = 'flex';
+nameFieldDiv.style.alignItems = 'center';
+
+const nameLabel = document.createElement('span');
+nameLabel.style.width = '120px';
+nameLabel.style.fontWeight = '500';
+nameLabel.textContent = 'Название:';
+
+const nameValueSpan = document.createElement('span');
+nameValueSpan.className = 'editable-field';
+nameValueSpan.dataset.field = 'name';
+nameValueSpan.dataset.doc = clientId;
+nameValueSpan.dataset.collection = 'clients';
+nameValueSpan.textContent = client.name || '—';
+nameValueSpan.style.flex = '1';
+nameValueSpan.style.padding = '4px 8px';
+nameValueSpan.style.borderRadius = '4px';
+
+nameFieldDiv.appendChild(nameLabel);
+nameFieldDiv.appendChild(nameValueSpan);
+fieldsDiv.appendChild(nameFieldDiv);
+
 
         // Стандартные поля клиента
         ['contact', 'phone'].forEach(fieldKey => {
@@ -1143,7 +1200,8 @@
         span.addEventListener('click', makeEditable);
     });
 }
-        // function renderClientsAndCars(clients, vehicles) {
+        
+// function renderClientsAndCars(clients, vehicles) {
         //         clientsContainer.innerHTML = '';
 
         //         for (const clientId in clients) {
@@ -2004,6 +2062,82 @@ function makeEditable(e) {
     input.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') save();
     });
+}
+
+// === ЗАМЕТКИ / FEEDBACK ===
+const feedbackModal = document.getElementById('feedbackModal');
+const openFeedbackModal = document.getElementById('openFeedbackModal');
+const closeFeedbackModal = document.getElementById('closeFeedbackModal');
+const feedbackInput = document.getElementById('feedbackInput');
+const sendFeedbackBtn = document.getElementById('sendFeedbackBtn');
+const feedbackList = document.getElementById('feedbackList');
+
+// Открытие модалки → загружаем заметки
+openFeedbackModal.addEventListener('click', async () => {
+    feedbackModal.classList.add('show');
+    await loadFeedbackNotes();
+});
+
+closeFeedbackModal.addEventListener('click', () => {
+    feedbackModal.classList.remove('show');
+});
+
+// Отправка новой заметки
+sendFeedbackBtn.addEventListener('click', async () => {
+    const text = feedbackInput.value.trim();
+    if (!text) return alert('Введите текст заметки');
+    
+    const note = {
+        author: 'admin',
+        text: text,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try {
+        await db.collection('x-parts-notes').add(note);
+        feedbackInput.value = '';
+        await loadFeedbackNotes(); // перезагрузка списка
+    } catch (err) {
+        alert('Ошибка отправки: ' + err.message);
+    }
+});
+
+// Загрузка всех заметок
+async function loadFeedbackNotes() {
+    try {
+        feedbackList.innerHTML = '<div>Загрузка...</div>';
+        const snapshot = await db.collection('x-parts-notes')
+            .orderBy('timestamp', 'desc')
+            .get();
+        
+        if (snapshot.empty) {
+            feedbackList.innerHTML = '<div style="color:#888;">Нет заметок</div>';
+            return;
+        }
+
+        let html = '';
+        snapshot.forEach(doc => {
+            const note = doc.data();
+            const date = note.timestamp?.toDate?.() 
+                ? new Date(note.timestamp.toDate()).toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+                : '—';
+
+            const author = note.author || '—';
+            html += `
+                <div style="margin-bottom:15px; padding-bottom:10px; border-bottom:1px dashed #ccc;">
+                    <strong>${author}</strong> — ${note.text} — <em>${date}</em>
+                </div>
+            `;
+        });
+        feedbackList.innerHTML = html;
+    } catch (err) {
+        feedbackList.innerHTML = `<div style="color:red;">Ошибка загрузки: ${err.message}</div>`;
+    }
 }
 // Загружаем данные при старте
         document.addEventListener('DOMContentLoaded', loadAndRender);
