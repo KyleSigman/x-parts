@@ -454,194 +454,151 @@ function renderBrands() {
     // }
 
     // === Рендер двигателей ===
-    // === Рендер двигателей с редактированием ===
-function renderEngines() {
-  const container = document.getElementById('engines-container');
-  container.innerHTML = '';
+        function renderEngines() {
+            const container = document.getElementById('engines-container');
+            container.innerHTML = '';
 
-  const engineToModels = {};
-  for (const [model, engine] of Object.entries(MODEL_TO_ENGINE)) {
-    if (!engineToModels[engine]) engineToModels[engine] = [];
-    engineToModels[engine].push(model);
-  }
+            const engineToModels = {};
+            for (const [model, engine] of Object.entries(MODEL_TO_ENGINE)) {
+                if (!engineToModels[engine]) engineToModels[engine] = [];
+                engineToModels[engine].push(model);
+            }
 
-  for (const [engine, models] of Object.entries(engineToModels)) {
-    const engineGroup = document.createElement('div');
-    engineGroup.className = 'engine-group';
-    
-    const engineLine = document.createElement('div');
-    engineLine.className = 'pair-line';
-    engineLine.innerHTML = `
+            for (const [engine, models] of Object.entries(engineToModels)) {
+                const engineGroup = document.createElement('div');
+                engineGroup.className = 'engine-group';
+
+                const engineLine = document.createElement('div');
+                engineLine.className = 'pair-line';
+                engineLine.innerHTML = `
       <span class="editable value-engine">${engine}</span>
       <span>→</span>
     `;
 
-    const modelsContainer = document.createElement('div');
-    modelsContainer.className = 'models-container';
-    modelsContainer.style.display = 'flex';
-    modelsContainer.style.gap = '8px';
-    modelsContainer.style.flexWrap = 'wrap';
-    modelsContainer.style.alignItems = 'center';
+                const modelsContainer = document.createElement('div');
+                modelsContainer.className = 'models-container';
+                modelsContainer.style.display = 'flex';
+                modelsContainer.style.gap = '8px';
+                modelsContainer.style.flexWrap = 'wrap';
+                modelsContainer.style.alignItems = 'center';
 
-    models.sort().forEach(model => {
-      const modelSpan = document.createElement('span');
-      modelSpan.className = 'editable value-model';
-      modelSpan.textContent = model;
-      modelSpan.style.cursor = 'pointer';
-      
-      // Редактирование модели
-      modelSpan.onclick = () => makeEditable(modelSpan, async (newModel) => {
-  if (newModel && newModel !== model) {
-    // Создаем новый объект без undefined
-    const updatedModelToEngine = {};
-    for (const [modelKey, engineValue] of Object.entries(MODEL_TO_ENGINE)) {
-      if (modelKey === model) {
-        updatedModelToEngine[newModel] = engineValue;
-      } else {
-        updatedModelToEngine[modelKey] = engineValue;
+                models.sort().forEach(model => {
+  const modelContainer = document.createElement('div');
+  modelContainer.style.display = 'flex';
+  modelContainer.style.alignItems = 'center';
+  modelContainer.style.gap = '5px';
+  
+  const modelSpan = document.createElement('span');
+  modelSpan.className = 'editable value-model';
+  modelSpan.textContent = model;
+  modelSpan.style.cursor = 'pointer';
+
+  // Редактирование модели
+  modelSpan.onclick = () => makeEditable(modelSpan, async (newModel) => {
+    if (newModel && newModel !== model) {
+      const updatedModelToEngine = {};
+      for (const [modelKey, engineValue] of Object.entries(MODEL_TO_ENGINE)) {
+        if (modelKey === model) {
+          updatedModelToEngine[newModel] = engineValue;
+        } else {
+          updatedModelToEngine[modelKey] = engineValue;
+        }
       }
+      MODEL_TO_ENGINE = updatedModelToEngine;
+      await saveToFirebase();
+      renderEngines();
     }
-    MODEL_TO_ENGINE = updatedModelToEngine;
+  });
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-pair-btn';
+  deleteBtn.innerHTML = '⛔';
+  deleteBtn.onclick = async () => {
+    delete MODEL_TO_ENGINE[model];
+    await saveToFirebase();
+    renderEngines();
+  };
+  
+  modelContainer.appendChild(modelSpan);
+  modelContainer.appendChild(deleteBtn);
+  modelsContainer.appendChild(modelContainer);
+});
+
+                // models.sort().forEach(model => {
+                //     const modelSpan = document.createElement('span');
+                //     modelSpan.className = 'editable value-model';
+                //     modelSpan.textContent = model;
+                //     modelSpan.style.cursor = 'pointer';
+
+                //     // Редактирование модели
+                //     modelSpan.onclick = () => makeEditable(modelSpan, async (newModel) => {
+                //         if (newModel && newModel !== model) {
+                //             // Создаем новый объект без undefined
+                //             const updatedModelToEngine = {};
+                //             for (const [modelKey, engineValue] of Object.entries(MODEL_TO_ENGINE)) {
+                //                 if (modelKey === model) {
+                //                     updatedModelToEngine[newModel] = engineValue;
+                //                 } else {
+                //                     updatedModelToEngine[modelKey] = engineValue;
+                //                 }
+                //             }
+                //             MODEL_TO_ENGINE = updatedModelToEngine;
+                //             await saveToFirebase();
+                //             renderEngines();
+                //         }
+                //     });
+
+                //     modelsContainer.appendChild(modelSpan);
+                // });
+
+                // Редактирование двигателя
+                const engineElement = engineLine.querySelector('.value-engine');
+                engineElement.onclick = () => makeEditable(engineElement, async (newEngine) => {
+                    if (newEngine && newEngine !== engine) {
+                        // Создаем новый объект без undefined
+                        const updatedModelToEngine = {};
+                        for (const [modelKey, engineValue] of Object.entries(MODEL_TO_ENGINE)) {
+                            if (engineValue === engine) {
+                                updatedModelToEngine[modelKey] = newEngine;
+                            } else {
+                                updatedModelToEngine[modelKey] = engineValue;
+                            }
+                        }
+                        MODEL_TO_ENGINE = updatedModelToEngine;
+                        await saveToFirebase();
+                        renderEngines();
+                    }
+                });
+
+                const addModelLine = document.createElement('div');
+addModelLine.className = 'pair-line';
+addModelLine.innerHTML = `<span class="editable value-model">+</span>`;
+
+addModelLine.onclick = async () => {
+  const newModel = prompt('Введите модель:');
+  if (newModel) {
+    MODEL_TO_ENGINE[newModel] = engine;
     await saveToFirebase();
     renderEngines();
   }
-});
-    //   modelSpan.onclick = () => makeEditable(modelSpan, async (newModel) => {
-    //     if (newModel && newModel !== model) {
-    //       // Обновляем связь
-    //       MODEL_TO_ENGINE[newModel] = MODEL_TO_ENGINE[model];
-    //       delete MODEL_TO_ENGINE[model];
-    //       await saveToFirebase();
-    //       renderEngines();
-    //     }
-    //   });
-      
-      modelsContainer.appendChild(modelSpan);
-    });
+};
 
-    // Редактирование двигателя
-    const engineElement = engineLine.querySelector('.value-engine');
-    engineElement.onclick = () => makeEditable(engineElement, async (newEngine) => {
-  if (newEngine && newEngine !== engine) {
-    // Создаем новый объект без undefined
-    const updatedModelToEngine = {};
-    for (const [modelKey, engineValue] of Object.entries(MODEL_TO_ENGINE)) {
-      if (engineValue === engine) {
-        updatedModelToEngine[modelKey] = newEngine;
-      } else {
-        updatedModelToEngine[modelKey] = engineValue;
-      }
-    }
-    MODEL_TO_ENGINE = updatedModelToEngine;
-    await saveToFirebase();
-    renderEngines();
-  }
-});
-    // engineElement.onclick = () => makeEditable(engineElement, async (newEngine) => {
-    //   if (newEngine && newEngine !== engine) {
-    //     // Обновляем все связи для этого двигателя
-    //     models.forEach(model => {
-    //       MODEL_TO_ENGINE[model] = newEngine;
-    //     });
-    //     await saveToFirebase();
-    //     renderEngines();
-    //   }
-    // });
+modelsContainer.appendChild(addModelLine);
+                
+                modelsContainer.appendChild(addModelLine);
+                engineLine.appendChild(modelsContainer);
+                engineGroup.appendChild(engineLine);
+                container.appendChild(engineGroup);
+            }
 
-    engineLine.appendChild(modelsContainer);
-    engineGroup.appendChild(engineLine);
-    container.appendChild(engineGroup);
-  }
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-btn';
+            addBtn.textContent = '+ Добавить связку';
+            addBtn.onclick = addEngineLink;
+            container.appendChild(addBtn);
+        }
 
-  const addBtn = document.createElement('button');
-  addBtn.className = 'add-btn';
-  addBtn.textContent = '+ Добавить связку';
-  addBtn.onclick = addEngineLink;
-  container.appendChild(addBtn);
-}
-// function renderEngines() {
-//   const container = document.getElementById('engines-container');
-//   container.innerHTML = '';
 
-//   const engineToModels = {};
-//   for (const [model, engine] of Object.entries(MODEL_TO_ENGINE)) {
-//     if (!engineToModels[engine]) engineToModels[engine] = [];
-//     engineToModels[engine].push(model);
-//   }
-
-//   for (const [engine, models] of Object.entries(engineToModels)) {
-//     const engineGroup = document.createElement('div');
-//     engineGroup.className = 'engine-group';
-    
-//     const engineLine = document.createElement('div');
-//     engineLine.className = 'pair-line';
-//     engineLine.innerHTML = `
-//       <span class="editable value-engine">${engine}</span>
-//       <span>→</span>
-//     `;
-
-//     const modelsContainer = document.createElement('div');
-//     modelsContainer.className = 'models-container';
-//     modelsContainer.style.display = 'flex';
-//     modelsContainer.style.gap = '8px';
-//     modelsContainer.style.flexWrap = 'wrap';
-//     modelsContainer.style.alignItems = 'center';
-
-//     models.sort().forEach(model => {
-//       const modelSpan = document.createElement('span');
-//       modelSpan.className = 'editable value-model';
-//       modelSpan.textContent = model;
-//       modelSpan.style.cursor = 'pointer';
-//       modelsContainer.appendChild(modelSpan);
-//     });
-
-//     engineLine.appendChild(modelsContainer);
-//     engineGroup.appendChild(engineLine);
-//     container.appendChild(engineGroup);
-//   }
-
-//   const addBtn = document.createElement('button');
-//   addBtn.className = 'add-btn';
-//   addBtn.textContent = '+ Добавить связку';
-//   addBtn.onclick = addEngineLink;
-//   container.appendChild(addBtn);
-// }
-
-    // // === Рендер двигателей ===
-    // function renderEngines() {
-    //   const container = document.getElementById('engines-container');
-    //   container.innerHTML = '';
-
-    //   // Группируем модели по двигателям
-    //   const engineToModels = {};
-    //   for (const [model, engine] of Object.entries(MODEL_TO_ENGINE)) {
-    //     if (!engineToModels[engine]) engineToModels[engine] = [];
-    //     engineToModels[engine].push(model);
-    //   }
-
-    //   // Рендерим группы
-    //   for (const [engine, models] of Object.entries(engineToModels)) {
-    //     const engineGroup = document.createElement('div');
-    //     engineGroup.className = 'engine-group';
-        
-    //     engineGroup.innerHTML = `
-    //       <div class="pair-line">
-    //         <span class="editable value-engine">${engine}</span>
-    //         <span>→</span>
-    //         <span>${models.sort().join(', ')}</span>
-    //       </div>
-    //     `;
-
-    //     container.appendChild(engineGroup);
-    //   }
-
-    //   // Кнопка добавления
-    //   const addBtn = document.createElement('button');
-    //   addBtn.className = 'add-btn';
-    //   addBtn.textContent = '+ Добавить связку';
-    //   addBtn.onclick = addEngineLink;
-    //   container.appendChild(addBtn);
-    // }
 
     // === Добавление модели к бренду ===
     function addModelToBrand(wmi) {
@@ -732,3 +689,4 @@ function renderEngines() {
 </body>
 
 </html>
+
