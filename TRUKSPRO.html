@@ -364,6 +364,7 @@ function renderBrands() {
     });
 
     // Модели
+        // Модели
     const modelsContainer = wmiBlock.querySelector(`#models-${wmi}`);
     for (const [code, model] of Object.entries(data.models)) {
       const modelLine = document.createElement('div');
@@ -372,38 +373,34 @@ function renderBrands() {
         <span class="editable key">${code}</span>
         <span>→</span>
         <span class="editable value-model">${model}</span>
+        <button class="delete-pair-btn">⛔</button>
       `;
 
-      // Обработчики для редактирования
+      const deleteBtn = modelLine.querySelector('.delete-pair-btn');
+      deleteBtn.onclick = async () => {
+        delete WMI_MAP[wmi].models[code];
+        await saveToFirebase();
+        renderBrands();
+      };
+
       const codeElement = modelLine.querySelector('.key');
       const modelElement = modelLine.querySelector('.value-model');
 
       codeElement.onclick = () => makeEditable(codeElement, async (newCode) => {
-  if (newCode && newCode !== code) {
-    // Создаем новый объект моделей без undefined
-    const updatedModels = {};
-    for (const [key, value] of Object.entries(WMI_MAP[wmi].models)) {
-      if (key === code) {
-        updatedModels[newCode] = value;
-      } else {
-        updatedModels[key] = value;
-      }
-    }
-    WMI_MAP[wmi].models = updatedModels;
-    await saveToFirebase();
-    renderBrands();
-  }
-});
-    //   codeElement.onclick = () => makeEditable(codeElement, async (newCode) => {
-    //     if (newCode && newCode !== code) {
-    //       // Безопасное обновление кода модели
-    //       const modelValue = WMI_MAP[wmi].models[code];
-    //       delete WMI_MAP[wmi].models[code];
-    //       WMI_MAP[wmi].models[newCode] = modelValue;
-    //       await saveToFirebase();
-    //       renderBrands();
-    //     }
-    //   });
+        if (newCode && newCode !== code) {
+          const updatedModels = {};
+          for (const [key, value] of Object.entries(WMI_MAP[wmi].models)) {
+            if (key === code) {
+              updatedModels[newCode] = value;
+            } else {
+              updatedModels[key] = value;
+            }
+          }
+          WMI_MAP[wmi].models = updatedModels;
+          await saveToFirebase();
+          renderBrands();
+        }
+      });
 
       modelElement.onclick = () => makeEditable(modelElement, async (newModel) => {
         if (newModel) {
@@ -733,4 +730,5 @@ function renderEngines() {
     loadData();
   </script>
 </body>
+
 </html>
