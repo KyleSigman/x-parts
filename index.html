@@ -3,12 +3,242 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>x-parts гараж</title>
-    <!-- Firebase -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🚛 Редактор справочника</title>
+
+    <style>
+        /* СТИЛИ */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9fb;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .sections {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .wmi-block {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .pair-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .editable {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            min-width: 80px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .key {
+            background: white;
+            border: 2px solid #6c757d;
+            color: #495057;
+        }
+
+        .value-brand {
+            background: #e74c3c;
+            color: white;
+            border: 2px solid #e74c3c;
+        }
+
+        .value-model {
+            background: #2980b9;
+            color: white;
+            border: 2px solid #2980b9;
+        }
+
+        .value-engine {
+            background: #27ae60;
+            color: white;
+            border: 2px solid #27ae60;
+        }
+
+        input {
+            padding: 6px 12px;
+            border: 2px solid #4a6fa5;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .mini-form {
+            max-width: 80vw;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .mini-form input {
+            max-width: 50px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .add-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .models-list {
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 2px dashed #dee2e6;
+        }
+
+        .engine-group {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+    </style>
+
+    <style>
+        .editable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .editable:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .edit-input {
+            padding: 4px 8px;
+            border: 2px solid #4a6fa5;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            max-width: 50px;
+            text-align: center;
+        }
+    </style>
+    
+    <style>
+        .garage-btn {
+            position: absolute;
+            left: 20px;
+            top: 20px;
+            padding: 10px 15px;
+            background: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            z-index: 1000;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚛 TRUCK SYSTEM</h1>
+        <a href="index.html" class="garage-btn">В гараж</a>
+
+        <div class="sections">
+            <!-- Бренды и модели -->
+            <div class="section">
+                <h2>🏭 Бренды и модели</h2>
+                <div id="brands-container"></div>
+            </div>
+
+            <!-- Двигатели -->
+            <div class="section">
+                <h2>⚙️ Двигатели и модели</h2>
+                <div id="engines-container"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCVr3ZztynpNzkeFY3aLKFN777oPunon4o",
@@ -22,1219 +252,401 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-    </script>
-<style>
-        .garage-btn {
-      position: absolute;
-      right: 100px;
-      top: 10px;
-      padding: 10px 15px;
-      background: #0080ff1b;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      z-index: 1000;
-    }
-      </style>
-    <style>
-        /* Общие стили */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
 
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-        }
+        let WMI_MAP = {};
+        let MODEL_TO_ENGINE = {};
 
-        /* Верхняя панель */
-        header {
-            background-color: #1976d2;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+        // === Мини-форма для добавления пар ===
+        function createMiniForm(container, onSave, onCancel) {
+            const form = document.createElement('div');
+            form.className = 'mini-form';
 
-        .header-title {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .ui-button {
-            background-color: #4fc3f7;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-
-        .ui-button:hover {
-            background-color: #03a9f4;
-        }
-
-        /* Основной контейнер */
-        .container {
-            display: flex;
-            padding: 20px;
-            gap: 20px;
-            min-height: calc(100vh - 70px);
-        }
-
-        /* Левая колонка */
-        .clients-container {
-            width: 30%;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .client-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .client-item:hover {
-            background-color: #f0f7ff;
-        }
-
-        .client-item.active {
-            background-color: #e3f2fd;
-            font-weight: 600;
-        }
-
-        .car-list {
-            margin-left: 20px;
-            margin-top: 10px;
-        }
-
-        .car-item {
-            padding: 10px;
-            font-size: 0.9em;
-            color: #555;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 4px;
-            margin-bottom: 5px;
-        }
-
-        .car-item:hover {
-            color: #1976d2;
-            background-color: #f8f8f8;
-        }
-
-        .car-item.selected {
-            background-color: #bbdefb;
-            color: #1565c0;
-            font-weight: 500;
-        }
-
-        /* Правая колонка */
-        .content {
-            width: 70%;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        .content-header {
-            font-size: 1em;
-            color: #1976d2;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #1976d2;
-        }
-
-        .parts-list {
-            list-style-type: none;
-        }
-
-        .part-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            background-color: #fafafa;
-            margin-bottom: 10px;
-        }
-
-        .part-name {
-            flex-grow: 1;
-            font-weight: 500;
-            color: #212121;
-        }
-
-        .part-article {
-            font-family: 'Courier New', monospace;
-            background-color: #e0f7fa;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        /* Модальное окно */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: start;
-            z-index: 1000;
-            overflow-y: auto;
-            /* ← скролл внутри модалки */
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            margin-top: 50px;
-            background-color: white;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 90%;
-            padding: 20px;
-            position: relative;
-            margin-bottom: 50px;
-
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 36px;
-            height: 36px;
-            background-color: #f44336;
-            /* красный */
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            line-height: 36px;
-            cursor: pointer;
-            padding: 0;
-            margin: 0;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            transform: translate(50%, -50%);
-            /* центр крестика — в углу окна */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .close-btn:hover {
-            background-color: #d32f2f;
-        }
-
-        /* .close-btn {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 1.5rem;
-            color: #777;
-            cursor: pointer;
-            background: none;
-            border: none;
-        } */
-
-        .close-btn:hover {
-            color: #333;
-        }
-
-        /* Вкладки */
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-
-        .tab {
-            padding: 10px 15px;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .tab.active {
-            background-color: #1976d2;
-            color: white;
-        }
-
-        /* Формы */
-        .form {
-            display: none;
-        }
-
-        .form.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1em;
-        }
-
-        .submit-btn {
-            background-color: #1976d2;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s;
-        }
-
-        .submit-btn:hover {
-            background-color: #0d47a1;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 900px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .clients-container,
-            .content {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Верхняя панель -->
-    <header>
-        <div class="header-title">x-parts гараж</div>
-        <button class="ui-button" id="uiButton">⚙️</button>
-    </header>
-<a href="TRUKSPRO.html" class="garage-btn">система</a>
-    <!-- Основной контейнер -->
-    <div class="container">
-        <!-- Левая колонка -->
-        <div class="clients-container" id="clientsContainer">
-            <!-- Клиенты и их автомобили будут добавляться динамически -->
+            form.innerHTML = `
+        <input type="text" placeholder="код" class="key-input">
+        <span>→</span>
+        <input type="text" placeholder="значение" class="value-input">
+        <div class="form-actions">
+          <button class="btn btn-success">✓</button>
+          <button class="btn btn-danger">✗</button>
         </div>
+      `;
 
-        <!-- Правая колонка -->
-        <div class="content" id="content">
-            <div class="content-header">Выберите автомобиль</div>
-            <div id="filterControls" style="margin-bottom:15px; padding:10px; border:1px solid #ddd; border-radius:6px; background:#fafafa; display:none;">
-                <label style="margin-right:12px; display:inline-block;">
-                    <input type="checkbox" id="filterByModel"> По модели
-                </label>
-                <label style="display:inline-block;">
-                    <input type="checkbox" id="filterByEngine"> По двигателю
-                </label>
-            </div>
-            <!-- <div id="filterControls" style="margin-bottom: 15px; display: none;">
-                <label style="margin-right: 15px;">
-                    <input type="checkbox" id="filterByModel"> По модели
-                </label>
-                <label>
-                    <input type="checkbox" id="filterByEngine"> По двигателю
-                </label>
-            </div> -->
-            <ul class="parts-list" id="partsList">
-                <!-- Список запчастей будет добавляться динамически -->
-            </ul>
-        </div>
-    </div>
+            const keyInput = form.querySelector('.key-input');
+            const valueInput = form.querySelector('.value-input');
+            const saveBtn = form.querySelector('.btn-success');
+            const cancelBtn = form.querySelector('.btn-danger');
 
-    <!-- Модальное окно -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <button class="close-btn" id="closeModal">
-                <span>&times;</span>
-            </button>
-            <!-- <button class="close-btn" id="closeModal">&times;</button> -->
-
-            <!-- Вкладки -->
-            <select id="formSelector" class="form-selector"
-                style="width:100%; padding:8px; margin-bottom:15px; font-size:1em; border:1px solid #ddd; border-radius:4px;">
-                <option value="driver">👥 Водитель</option>
-                <option value="car">🚗 Машина</option>
-                <option value="part">🔧 Запчасть</option>
-                <option value="compat">🔩 Группы совместимости</option> <!-- НОВАЯ СТРОКА -->
-            </select>
-
-            <!-- Форма водителя -->
-            <form class="form active" id="driverForm">
-                <div class="form-group">
-                    <label for="driverName">ФИО водителя</label>
-                    <input type="text" id="driverName" required>
-                </div>
-                <div class="form-group">
-                    <label for="driverContact">Контактное лицо</label>
-                    <input type="text" id="driverContact"> <!-- ← убрано required -->
-                </div>
-                <div class="form-group">
-                    <label for="driverPhone">Телефон</label>
-                    <input type="tel" id="driverPhone"> <!-- ← убрано required -->
-                </div>
-                <button type="submit" class="submit-btn">Добавить водителя</button>
-            </form>
-
-            <!-- Форма машины -->
-            <!-- Форма машины -->
-            <form class="form" id="carForm">
-                <div class="form-group">
-                    <label for="carBrand">Бренд</label>
-                    <input type="text" id="carBrand">
-                </div>
-                <div class="form-group">
-                    <label for="carVin">VIN</label>
-                    <input type="text" id="carVin" required> <!-- ✅ остаётся обязательным -->
-                    <div id="vinPreview"
-                        style="margin-top:8px; padding:8px; background:#f0f8ff; border-radius:4px; font-size:0.9em; display:none;">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="carModel">Модель</label>
-                    <input type="text" id="carModel">
-                </div>
-                <div class="form-group">
-                    <label for="carEngine">Двигатель</label>
-                    <input type="text" id="carEngine">
-                </div>
-                <div class="form-group">
-                    <label for="carYear">Год выпуска</label>
-                    <input type="number" id="carYear" min="1990" max="2030">
-                </div>
-                <div class="form-group">
-                    <label for="carPlate">Гос. номер</label>
-                    <input type="text" id="carPlate">
-                </div>
-                <div class="form-group">
-                    <label for="carOwner">Владелец</label>
-                    <select id="carOwner" required>
-                        <!-- Опции динамически -->
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn">Добавить машину</button>
-            </form>
-            <!-- <form class="form" id="carForm">
-                <div class="form-group">
-                    <label for="carBrand">Бренд</label>
-                    <input type="text" id="carBrand"> 
-                </div>
-                <div class="form-group">
-                    <label for="carVin">VIN</label>
-                    <input type="text" id="carVin" required> 
-                    <div id="vinPreview" style="margin-top:8px; padding:8px; background:#f0f8ff; border-radius:4px; font-size:0.9em; display:none;"></div>
-                </div>
-                <div class="form-group">
-                    <label for="carModel">Модель</label>
-                    <input type="text" id="carModel"> 
-                </div>
-                <div class="form-group">
-                    <label for="carEngine">Двигатель</label>
-                    <input type="text" id="carEngine"> 
-                </div>
-                <div class="form-group">
-                    <label for="carYear">Год выпуска</label>
-                    <input type="number" id="carYear" min="1990" max="2024"> 
-                </div>
-                <div class="form-group">
-                    <label for="carPlate">Гос. номер</label>
-                    <input type="text" id="carPlate"> 
-                </div>
-                <div class="form-group">
-                    <label for="carOwner">Владелец</label>
-                    <select id="carOwner" required> 
-
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn">Добавить машину</button>
-            </form> -->
-
-            <!-- Форма запчасти -->
-            <form class="form" id="partForm">
-                <div class="form-group">
-                    <label for="partArticle">Артикул</label>
-                    <input type="text" id="partArticle" required> <!-- ✅ остаётся -->
-                </div>
-                <div class="form-group">
-                    <label for="partName">Наименование</label>
-                    <input type="text" id="partName"> <!-- ← убрано required -->
-                </div>
-                <div class="form-group">
-                    <label for="partBrand">Бренд</label>
-                    <input type="text" id="partBrand"> <!-- ← убрано required -->
-                </div>
-                <div class="form-group">
-                    <label for="partCar">Совместимость</label>
-                    <select id="partCar"> <!-- ← убрано required -->
-                        <!-- Опции -->
-                    </select>
-                </div>
-                <button type="submit" class="submit-btn">Добавить запчасть</button>
-            </form>
-
-            <!-- Форма одной группы совместимости -->
-            <form class="form" id="compatForm">
-                <div class="form-group">
-                    <label>ID группы (латиница, без пробелов)</label>
-                    <input type="text" id="compatId" placeholder="howo_t5g_mc07" required> <!-- ✅ обязательный -->
-                </div>
-                <div class="form-group">
-                    <label>Название (для отображения)</label>
-                    <input type="text" id="compatName" placeholder="HOWO T5G (MC07)" required> <!-- ✅ -->
-                </div>
-                <div class="form-group">
-                    <label>Бренд</label>
-                    <input type="text" id="compatBrand" placeholder="HOWO / SINOTRUK" required> <!-- ✅ -->
-                </div>
-                <div class="form-group">
-                    <label>Модель</label>
-                    <input type="text" id="compatModel" placeholder="T5G"> <!-- ок -->
-                </div>
-                <div class="form-group">
-                    <label>Двигатель</label>
-                    <input type="text" id="compatEngine" placeholder="MC07"> <!-- ок -->
-                </div>
-                <button type="submit" class="submit-btn">Добавить группу</button>
-            </form>
-
-
-        </div>
-    </div>
-
-    <div style="text-align:center; margin-top:20px; display: none;">
-        <button id="exportJsonBtn" class="ui-button">📥 Скачать всю базу как JSON</button>
-        <pre id="jsonOutput"
-            style="display:none; background:#f8f9fa; padding:15px; margin-top:10px; border-radius:6px; overflow:auto;"></pre>
-    </div>
-
-    <script>
-        // DOM элементы
-        const clientsContainer = document.getElementById('clientsContainer');
-        const content = document.getElementById('content');
-        const partsList = document.getElementById('partsList');
-        const uiButton = document.getElementById('uiButton');
-        const modal = document.getElementById('modal');
-        const closeModal = document.getElementById('closeModal');
-        const tabs = document.querySelectorAll('.tab');
-        const forms = document.querySelectorAll('.form');
-        const driverForm = document.getElementById('driverForm');
-        const carForm = document.getElementById('carForm');
-        const partForm = document.getElementById('partForm');
-        const carOwnerSelect = document.getElementById('carOwner');
-        const partCarSelect = document.getElementById('partCar');
-
-        const WMI_MAP = {
-            "LZZ": {
-                "brand": "HOWO / SINOTRUK", "models": {
-                    "5CL": "C7H", "5BP": "T7H", "5BR": "T5G", "1LC": "TH7", "1LD": "TX", "5CA": "A7",
-                    "5DY": "T5G",  // ← ИСПРАВЛЕНО
-                    "CL1D": "C7H", "CL2D": "C7H", "BL1D": "T7H", "BR1D": "T5G", "BR2D": "T5G"
+            saveBtn.onclick = () => {
+                const key = keyInput.value.trim();
+                const value = valueInput.value.trim();
+                if (key && value) {
+                    onSave(key, value);
                 }
-            },
-
-            "LZW": {
-                "brand": "HOWO", "models": {
-                    "5AC": "T7H", "5AD": "T5G", "5AE": "C7H", "AC1A": "T7H", "AC2A": "T7H"
-                }
-            },
-            "LVB": {
-                "brand": "FOTON", "models": {
-                    "4LA": "Auman", "4LB": "Aumark", "4LC": "Aumark S", "BJ4189": "Auman", "S6P": "Auman EST"
-                }
-            },
-            "LFC": {
-                "brand": "FAW", "models": {
-                    "5EK": "J6", "5EL": "J7", "5EM": "J6P", "AC1A": "J6", "AC2A": "J6", "BC1A": "J7", "BC2A": "J7"
-                }
-            },
-            "LSV": {
-                "brand": "SHACMAN", "models": {
-                    "5FA": "X3000", "5FB": "X6000", "5FC": "F3000", "AC1A": "X3000", "BC1A": "X3000"
-                }
-            },
-            "LDP": {
-                "brand": "DONGFENG", "models": {
-                    "4KA": "Tianjin", "4KB": "KX", "4KC": "KL", "DFL": "Tianjin"
-                }
-            },
-            "LJ1": {
-                "brand": "JAC", "models": {
-                    "5FA": "Heavy Truck", "5FB": "Light Truck", "HFC": "Heavy Truck"
-                }
-            },
-            "LZG": {
-                "brand": "SHAANXI", "models": {
-                    "5HA": "X3000", "5HB": "M3000", "AC1A": "X3000", "WD615": "X3000"
-                }
-            },
-            "LZX": {
-                "brand": "BEIBEN", "models": {
-                    "5NA": "V3", "5NB": "NG80", "ZZ3327": "V3"
-                }
-            },
-            // Новый блок для LGA
-            "LGA": {
-                "brand": "HOWO / SINOTRUK",
-                "models": {
-                    "G3D": "T7H",      // Пример: из VIN LGAG3DV21P8836707 → G3D → T7H
-                    "V21": "C7H",     // Примерное соответствие (уточнить по каталогу)
-                    "P88": "A7",    // Примерное соответствие
-                    // Добавить другие коды моделей по необходимости
-                    "5CL": "C7H",
-                    "5BP": "T7H",
-                    "5BR": "T5G",
-                    "5CA": "A7"
-                }
-            }
-        };
-
-        const YEAR_CODES = {
-            'A': 2010, 'B': 2011, 'C': 2012, 'D': 2013, 'E': 2014,
-            'F': 2015, 'G': 2016, 'H': 2017, 'J': 2018, 'K': 2019,
-            'L': 2020, 'M': 2021, 'N': 2022, 'P': 2023, 'R': 2024,
-            'S': 2025, 'T': 2026, 'V': 2027, 'W': 2028, 'X': 2029,
-            'Y': 2030
-        };
-
-        function decodeVIN(vin) {
-            vin = vin.trim().toUpperCase();
-            const preview = { valid: false, brand: '', model: '', engine: '', year: null, serial: '' };
-
-            const vinRegex = /^[A-HJ-NPR-Z0-9]{17}$/;
-            if (!vinRegex.test(vin)) {
-                return preview;
-            }
-
-            const wmi = vin.substring(0, 3);
-            const vds = vin.substring(3, 8);
-            const yearCode = vin.charAt(9);
-            const serial = vin.substring(11);
-
-            const brandInfo = WMI_MAP[wmi] || { brand: "Неизвестен", models: {} };
-            preview.brand = brandInfo.brand;
-            preview.year = YEAR_CODES[yearCode] || null;
-            preview.serial = serial;
-            preview.valid = true;
-
-            // Определяем модель
-            preview.model = "Неизвестна";
-            for (const [code, modelName] of Object.entries(brandInfo.models)) {
-                if (vds.startsWith(code)) {
-                    preview.model = modelName;
-                    break;
-                }
-            }
-
-            // Определяем двигатель ПО МОДЕЛИ
-
-            const MODEL_TO_ENGINE = {
-                "T5G": "MC07", "T7H": "MC11", "C7H": "MC11", "TH7": "MC11", "TX": "WP10", "A7": "WP10",
-                "J6": "WP10", "J7": "WP12", "J6P": "WP13",
-                "Auman": "WP12", "Auman EST": "WP12", "Aumark": "WP10",
-                "X3000": "WP10", "X6000": "WP12", "F3000": "WD615",
-                "Tianjin": "WD615", "KL": "WP10",
-                "M3000": "WP10"
             };
 
-            if (preview.model !== "Неизвестна") {
-                preview.engine = MODEL_TO_ENGINE[preview.model] || "";
-            }
+            cancelBtn.onclick = onCancel;
 
-            return preview;
+            container.appendChild(form);
+            keyInput.focus();
         }
 
-        // Обработчик ввода VIN
-        document.getElementById('carVin').addEventListener('input', function () {
-            // document.getElementById('carVin').addEventListener('blur', function () {
-            const vin = this.value;
-            const previewDiv = document.getElementById('vinPreview');
+        // === Функция редактирования поля ===
+        function makeEditable(element, onSave) {
+            const originalValue = element.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = originalValue;
+            input.className = 'edit-input';
 
-            if (!vin || vin.length !== 17) {
-                previewDiv.style.display = 'none';
-                return;
+            // Сохраняем оригинальные стили
+            const originalClasses = element.className;
+
+            // Заменяем элемент на input
+            element.parentNode.replaceChild(input, element);
+            input.focus();
+            input.select();
+
+            function save() {
+                const newValue = input.value.trim();
+                if (newValue && newValue !== originalValue) {
+                    onSave(newValue);
+                } else {
+                    cancel();
+                }
             }
 
-            const decoded = decodeVIN(vin);
-            if (!decoded.valid) {
-                previewDiv.innerHTML = '<span style="color:red">❌ Некорректный VIN</span>';
-                previewDiv.style.display = 'block';
-                return;
+            function cancel() {
+                input.parentNode.replaceChild(element, input);
+                element.textContent = originalValue;
+                element.className = originalClasses;
             }
 
-            // Автозаполнение полей
-            if (decoded.brand) document.getElementById('carBrand').value = decoded.brand;
-            if (decoded.model !== "Неизвестна") {
-                document.getElementById('carModel').value = decoded.model;
-            }
-            const engineInput = document.getElementById('carEngine');
-            if (decoded.engine && engineInput && engineInput.value === '') {
-                engineInput.value = decoded.engine;
-            }
-            // if (decoded.model !== "Неизвестна") document.getElementById('carModel').value = decoded.model;
-            if (decoded.year) document.getElementById('carYear').value = decoded.year;
-
-            // Превью
-            let html = `🚗 <b>Расшифровка:</b><br>`;
-            html += `🏷️ Бренд: <b>${decoded.brand}</b><br>`;
-            if (decoded.model !== "Неизвестна") html += `📋 Модель: <b>${decoded.model}</b><br>`;
-            if (decoded.engine) html += `⚙️ Двигатель: <b>${decoded.engine}</b><br>`; // ← ЭТА СТРОКА ДОБАВЛЕНА
-            if (decoded.year) html += `📅 Год: <b>${decoded.year}</b><br>`;
-            html += `🔢 Серийный номер: <code>${decoded.serial}</code>`;
-
-            previewDiv.innerHTML = html;
-            previewDiv.style.display = 'block';
-        });
-
-        // Загрузка данных из Firebase и отрисовка
-        async function loadAndRender() {
-            try {
-                // Получаем всех клиентов
-                const clientsSnapshot = await db.collection('clients').get();
-                const clients = {};
-                clientsSnapshot.forEach(doc => {
-                    clients[doc.id] = doc.data();
-                });
-
-                // Получаем все машины
-                const vehiclesSnapshot = await db.collection('vehicles').get();
-                const vehicles = {};
-                vehiclesSnapshot.forEach(doc => {
-                    vehicles[doc.id] = doc.data();
-                });
-
-                // Получаем все запчасти
-                const partsSnapshot = await db.collection('parts').get();
-                const parts = {};
-                partsSnapshot.forEach(doc => {
-                    parts[doc.id] = doc.data();
-                });
-
-                // Получаем совместимость
-                const compatSnapshot = await db.collection('compatibility').get();
-                const compatibility = {};
-                compatSnapshot.forEach(doc => {
-                    compatibility[doc.id] = doc.data();
-                });
-
-                // Отрисовка клиентов и их машин
-                renderClientsAndCars(clients, vehicles);
-
-                // Обновляем выпадающие списки в формах
-                updateSelects(clients, vehicles);
-            } catch (err) {
-                console.error("Ошибка загрузки данных:", err);
-                alert("❌ Не удалось загрузить данные из Firebase");
-            }
+            input.addEventListener('blur', save);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') save();
+                if (e.key === 'Escape') cancel();
+            });
         }
 
-        function renderClientsAndCars(clients, vehicles) {
-            clientsContainer.innerHTML = '';
+        // === Рендер брендов с редактированием ===
+        function renderBrands() {
+            const container = document.getElementById('brands-container');
+            container.innerHTML = '';
 
-            // Загружаем совместимость и запчасти один раз
-            db.collection('compatibility').get().then(compatSnapshot => {
-                const compatibility = {};
-                compatSnapshot.forEach(doc => {
-                    compatibility[doc.id] = doc.data();
+            for (const [wmi, data] of Object.entries(WMI_MAP)) {
+                const wmiBlock = document.createElement('div');
+                wmiBlock.className = 'wmi-block';
+
+                // WMI и бренд
+                wmiBlock.innerHTML = `
+      <div class="pair-line">
+        <span class="editable key">${wmi}</span>
+        <span>→</span>
+        <span class="editable value-brand">${data.brand}</span>
+      </div>
+      <div class="models-list" id="models-${wmi}"></div>
+      <button class="add-btn" onclick="addModelToBrand('${wmi}')">+ Добавить модель</button>
+    `;
+
+                // Обработчики для редактирования WMI и бренда
+                const wmiElement = wmiBlock.querySelector('.pair-line .key');
+                const brandElement = wmiBlock.querySelector('.pair-line .value-brand');
+
+                wmiElement.onclick = () => makeEditable(wmiElement, async (newWmi) => {
+    if (!newWmi || newWmi === wmi) return;
+
+    const data = WMI_MAP[wmi];
+    if (!data) return;
+
+    // Создаём новый объект без мутации
+    const newWmiMap = {};
+    for (const [key, value] of Object.entries(WMI_MAP)) {
+        if (key === wmi) {
+            newWmiMap[newWmi] = value;
+        } else {
+            newWmiMap[key] = value;
+        }
+    }
+    WMI_MAP = newWmiMap;
+
+    await saveToFirebase();
+    renderBrands();
+});
+
+
+                brandElement.onclick = () => makeEditable(brandElement, async (newBrand) => {
+                    if (newBrand) {
+                        WMI_MAP[wmi].brand = newBrand;
+                        await saveToFirebase();
+                        renderBrands();
+                    }
                 });
 
-                db.collection('parts').get().then(partsSnapshot => {
-                    const parts = {};
-                    partsSnapshot.forEach(doc => {
-                        parts[doc.id] = doc.data();
+                // Модели
+                const modelsContainer = wmiBlock.querySelector(`#models-${wmi}`);
+                for (const [code, model] of Object.entries(data.models)) {
+                    const modelLine = document.createElement('div');
+                    modelLine.className = 'pair-line';
+                    modelLine.innerHTML = `
+        <span class="editable key">${code}</span>
+        <span>→</span>
+        <span class="editable value-model">${model}</span>
+        <button class="delete-pair-btn">⛔</button>
+      `;
+
+                    const deleteBtn = modelLine.querySelector('.delete-pair-btn');
+                    deleteBtn.onclick = async () => {
+                        delete WMI_MAP[wmi].models[code];
+                        await saveToFirebase();
+                        renderBrands();
+                    };
+
+                    const codeElement = modelLine.querySelector('.key');
+                    const modelElement = modelLine.querySelector('.value-model');
+
+                    codeElement.onclick = () => makeEditable(codeElement, async (newCode) => {
+                        if (newCode && newCode !== code) {
+                            const updatedModels = {};
+                            for (const [key, value] of Object.entries(WMI_MAP[wmi].models)) {
+                                if (key === code) {
+                                    updatedModels[newCode] = value;
+                                } else {
+                                    updatedModels[key] = value;
+                                }
+                            }
+                            WMI_MAP[wmi].models = updatedModels;
+                            await saveToFirebase();
+                            renderBrands();
+                        }
                     });
 
-                    for (const clientId in clients) {
-                        const client = clients[clientId];
+                    modelElement.onclick = () => makeEditable(modelElement, async (newModel) => {
+                        if (newModel) {
+                            WMI_MAP[wmi].models[code] = newModel;
+                            await saveToFirebase();
+                            renderBrands();
+                        }
+                    });
 
-                        // Элемент клиента
-                        const clientItem = document.createElement('div');
-                        clientItem.className = 'client-item';
-                        clientItem.innerHTML = `
-                    <div><strong>${client.name || 'Без имени'}</strong></div>
-                    <div style="font-size: 0.85em; color: #666;">${client.phone || ''}</div>
-                `;
+                    modelsContainer.appendChild(modelLine);
+                }
+                
 
-                        // Контейнер для машин (скрыт по умолчанию)
-                        const carList = document.createElement('div');
-                        carList.className = 'car-list';
-                        carList.style.display = 'none'; // ← скрыт
+                container.appendChild(wmiBlock);
+            }
+        }
+        // === Рендер брендов ===
 
-                        // Собираем машины клиента
-                        const clientCars = [];
-                        for (const vin in vehicles) {
-                            const car = vehicles[vin];
-                            if (car.owner_id === clientId) {
-                                clientCars.push({ vin, car });
+        // === Рендер двигателей с редактированием ===
+        
+        function renderEngines() {
+            const container = document.getElementById('engines-container');
+            container.innerHTML = '';
+
+            const engineToModels = {};
+            for (const [model, engine] of Object.entries(MODEL_TO_ENGINE)) {
+                if (!engineToModels[engine]) engineToModels[engine] = [];
+                engineToModels[engine].push(model);
+            }
+
+            for (const [engine, models] of Object.entries(engineToModels)) {
+                const engineGroup = document.createElement('div');
+                engineGroup.className = 'engine-group';
+
+                const engineLine = document.createElement('div');
+                engineLine.className = 'pair-line';
+                engineLine.innerHTML = `
+      <span class="editable value-engine">${engine}</span>
+      <span>→</span>
+    `;
+
+                const modelsContainer = document.createElement('div');
+                modelsContainer.className = 'models-container';
+                modelsContainer.style.display = 'flex';
+                modelsContainer.style.gap = '8px';
+                modelsContainer.style.flexWrap = 'wrap';
+                modelsContainer.style.alignItems = 'center';
+
+                models.sort().forEach(model => {
+  const modelContainer = document.createElement('div');
+  modelContainer.style.display = 'flex';
+  modelContainer.style.alignItems = 'center';
+  modelContainer.style.gap = '5px';
+  
+  const modelSpan = document.createElement('span');
+  modelSpan.className = 'editable value-model';
+  modelSpan.textContent = model;
+  modelSpan.style.cursor = 'pointer';
+
+  // Редактирование модели
+  modelSpan.onclick = () => makeEditable(modelSpan, async (newModel) => {
+    if (newModel && newModel !== model) {
+      const updatedModelToEngine = {};
+      for (const [modelKey, engineValue] of Object.entries(MODEL_TO_ENGINE)) {
+        if (modelKey === model) {
+          updatedModelToEngine[newModel] = engineValue;
+        } else {
+          updatedModelToEngine[modelKey] = engineValue;
+        }
+      }
+      MODEL_TO_ENGINE = updatedModelToEngine;
+      await saveToFirebase();
+      renderEngines();
+    }
+  });
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-pair-btn';
+  deleteBtn.innerHTML = '⛔';
+  deleteBtn.onclick = async () => {
+    delete MODEL_TO_ENGINE[model];
+    await saveToFirebase();
+    renderEngines();
+  };
+  
+  modelContainer.appendChild(modelSpan);
+  modelContainer.appendChild(deleteBtn);
+  modelsContainer.appendChild(modelContainer);
+});
+
+               
+
+                // Редактирование двигателя
+                const engineElement = engineLine.querySelector('.value-engine');
+                engineElement.onclick = () => makeEditable(engineElement, async (newEngine) => {
+                    if (newEngine && newEngine !== engine) {
+                        // Создаем новый объект без undefined
+                        const updatedModelToEngine = {};
+                        for (const [modelKey, engineValue] of Object.entries(MODEL_TO_ENGINE)) {
+                            if (engineValue === engine) {
+                                updatedModelToEngine[modelKey] = newEngine;
+                            } else {
+                                updatedModelToEngine[modelKey] = engineValue;
                             }
                         }
-
-                        // Добавляем машины в скрытый блок
-                        clientCars.forEach(({ vin, car }) => {
-                            const carItem = document.createElement('div');
-                            carItem.className = 'car-item';
-                            carItem.setAttribute('data-vin', vin);
-                            carItem.innerHTML = `${car.brand || ''} (${car.year || '?'}) - ${car.plate || vin}`;
-                            // carItem.innerHTML = `${car.brand || ''} (${car.year || '?'}) - ${car.plate || vin}`;
-                            carItem.addEventListener('click', (e) => {
-                                e.stopPropagation(); // не срабатывает клик по клиенту
-                                document.querySelectorAll('.car-item').forEach(el => el.classList.remove('selected'));
-                                carItem.classList.add('selected');
-                                showPartsForCar(vin, car);
-                                // showPartsForCar(vin, car, parts);
-                                // showPartsForCar(vin, car, compatibility, parts);
-                            });
-                            carList.appendChild(carItem);
-                        });
-
-                        // Клик по клиенту — переключает видимость машин
-                        clientItem.addEventListener('click', () => {
-                            const isVisible = carList.style.display === 'block';
-                            carList.style.display = isVisible ? 'none' : 'block';
-                        });
-
-                        clientItem.appendChild(carList);
-                        clientsContainer.appendChild(clientItem);
+                        MODEL_TO_ENGINE = updatedModelToEngine;
+                        await saveToFirebase();
+                        renderEngines();
                     }
                 });
-            });
+
+                const addModelLine = document.createElement('div');
+addModelLine.className = 'pair-line';
+addModelLine.innerHTML = `<span class="editable value-model">+</span>`;
+
+addModelLine.onclick = async () => {
+  const newModel = prompt('Введите модель:');
+  if (newModel) {
+    MODEL_TO_ENGINE[newModel] = engine;
+    await saveToFirebase();
+    renderEngines();
+  }
+};
+
+modelsContainer.appendChild(addModelLine);
+                
+                modelsContainer.appendChild(addModelLine);
+                engineLine.appendChild(modelsContainer);
+                engineGroup.appendChild(engineLine);
+                container.appendChild(engineGroup);
+            }
+
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-btn';
+            addBtn.textContent = '+ Добавить связку';
+            addBtn.onclick = addEngineLink;
+            container.appendChild(addBtn);
         }
 
         
+        
 
-        // Глобальная переменная — кэш фильтров (загружается один раз)
-        let CACHED_FILTER_LINES = null;
+        // === Добавление модели к бренду ===
+        function addModelToBrand(wmi) {
+            const modelsContainer = document.getElementById(`models-${wmi}`);
 
-        async function loadFiltersOnce() {
-            if (CACHED_FILTER_LINES) return CACHED_FILTER_LINES;
+            createMiniForm(modelsContainer,
+                async (code, model) => {
+                    // Обновляем данные
+                    WMI_MAP[wmi].models[code] = model;
+
+                    // Сохраняем в Firebase
+                    await saveToFirebase();
+
+                    // Перерендерим
+                    renderBrands();
+                    renderEngines();
+                },
+                () => {
+                    // Отмена - просто удаляем форму
+                    modelsContainer.removeChild(modelsContainer.lastChild);
+                }
+            );
+        }
+
+        // === Добавление связки двигатель-модель ===
+        function addEngineLink() {
+            const container = document.getElementById('engines-container');
+            const addBtn = container.querySelector('.add-btn');
+            container.removeChild(addBtn);
+
+            createMiniForm(container,
+                async (model, engine) => {
+                    // Обновляем данные
+                    MODEL_TO_ENGINE[model] = engine;
+
+                    // Сохраняем в Firebase
+                    await saveToFirebase();
+
+                    // Перерендерим
+                    renderEngines();
+                },
+                () => {
+                    // Отмена - перерендерим чтобы вернуть кнопку
+                    renderEngines();
+                }
+            );
+        }
+
+        // === Сохранение в Firebase ===
+        async function saveToFirebase() {
             try {
-                const response = await fetch('categories_export_full.txt');
-                const text = await response.text();
-                CACHED_FILTER_LINES = parseFiltersFromText(text);
-                return CACHED_FILTER_LINES;
-            } catch (e) {
-                console.error("Не удалось загрузить фильтры:", e);
-                return [];
+                await db.collection('TRUCKSYSTEM').doc('reference_data').update({
+                    WMI_MAP: WMI_MAP,
+                    MODEL_TO_ENGINE: MODEL_TO_ENGINE
+                });
+                console.log('✅ Данные сохранены');
+            } catch (error) {
+                console.error('❌ Ошибка сохранения:', error);
             }
         }
 
-        function parseFiltersFromText(text) {
-            const lines = text.split('\n');
-            let inFilters = false;
-            const filterLines = [];
-            for (const line of lines) {
-                const clean = line.trim();
-                if (clean === "=== FILTRY ===") {
-                    inFilters = true;
-                    continue;
+        // === Загрузка данных ===
+        async function loadData() {
+            try {
+                const docRef = db.collection('TRUCKSYSTEM').doc('reference_data');
+                const docSnap = await docRef.get();
+
+                if (docSnap.exists) {
+                    const data = docSnap.data();
+                    WMI_MAP = data.WMI_MAP || {};
+                    MODEL_TO_ENGINE = data.MODEL_TO_ENGINE || {};
+
+                    renderBrands();
+                    renderEngines();
                 }
-                if (inFilters && clean.startsWith("===")) {
-                    break; // выходим при следующем разделе
-                }
-                if (inFilters && clean && !clean.startsWith("===")) {
-                    filterLines.push(clean);
-                }
-            }
-            return filterLines;
-        }
-
-        async function showPartsForCar(vin, car) {
-    const header = content.querySelector('.content-header');
-    header.textContent = `Фильтры для: ${car.brand || ''} ${car.model || ''} (${car.year || ''})`;
-
-    const filterControls = document.getElementById('filterControls');
-    if (filterControls) filterControls.style.display = 'block';
-
-    const filters = await loadFiltersOnce();
-
-    const brandStr = (car.brand || '').trim().toLowerCase();
-    const modelStr = (car.model || '').trim().toLowerCase();
-    const engineStr = (car.engine || '').trim().toLowerCase();
-
-    const brandTerms = brandStr.includes('/') 
-        ? brandStr.split('/').map(s => s.trim()) 
-        : [brandStr];
-
-    // Фильтрация по бренду (базовая)
-    let matched = filters.filter(line => {
-        const lineLower = line.toLowerCase();
-        return brandTerms.some(term => term && lineLower.includes(term));
-    });
-
-    // Получаем состояние чекбоксов
-    const filterByModel = document.getElementById('filterByModel')?.checked || false;
-    const filterByEngine = document.getElementById('filterByEngine')?.checked || false;
-
-    // Доп. фильтрация по модели/двигателю
-    if (filterByModel || filterByEngine) {
-        matched = matched.filter(line => {
-            const lineLower = line.toLowerCase();
-            const hasModel = modelStr && lineLower.includes(modelStr);
-            const hasEngine = engineStr && lineLower.includes(engineStr);
-
-            if (filterByModel && filterByEngine) {
-                return hasModel && hasEngine;
-            } else if (filterByModel) {
-                return hasModel;
-            } else if (filterByEngine) {
-                return hasEngine;
-            }
-            return true;
-        });
-    }
-
-    partsList.innerHTML = '';
-
-    if (matched.length === 0) {
-        partsList.innerHTML = '<li class="part-item">Фильтры не найдены</li>';
-        return;
-    }
-
-    matched.forEach(line => {
-        let highlighted = line;
-
-        // Подсветка модели
-        if (modelStr && line.toLowerCase().includes(modelStr)) {
-            const regex = new RegExp(`(${car.model.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-            highlighted = highlighted.replace(regex, '<mark style="background:#4caf50;color:black;font-weight:bold;">$1</mark>');
-        }
-
-        // Подсветка двигателя
-        if (engineStr && line.toLowerCase().includes(engineStr)) {
-            const regex = new RegExp(`(${car.engine.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-            highlighted = highlighted.replace(regex, '<mark style="background:#ff9800;color:white;font-weight:bold;">$1</mark>');
-        }
-
-        const el = document.createElement('li');
-        el.className = 'part-item';
-
-        // Зелёная рамка, если есть совпадение по модели или двигателю
-        if ((modelStr && line.toLowerCase().includes(modelStr)) || 
-            (engineStr && line.toLowerCase().includes(engineStr))) {
-            el.style.border = '2px solid #4caf50';
-            el.style.borderRadius = '6px';
-        }
-
-        el.innerHTML = `<div class="part-name">${highlighted}</div>`;
-        partsList.appendChild(el);
-    });
-}
-
-        
-
-
-        function updateSelects(clients, vehicles) {
-            // Владельцы — остаются как есть
-            carOwnerSelect.innerHTML = '<option value="">Выберите владельца</option>';
-            for (const id in clients) {
-                const opt = document.createElement('option');
-                opt.value = id;
-                opt.textContent = clients[id].name || id;
-                carOwnerSelect.appendChild(opt);
-            }
-
-            // Запчасти — теперь привязываются к ГРУППАМ, а не к машинам
-            // Поэтому загружаем коллекцию compatibility как список групп
-            db.collection('compatibility').get().then(snapshot => {
-                partCarSelect.innerHTML = '<option value="">Выберите совместимость</option>';
-                snapshot.forEach(doc => {
-                    const group = doc.data();
-                    const opt = document.createElement('option');
-                    opt.value = doc.id; // ID группы (например: howo_t5g_mc07)
-                    opt.textContent = group.name || doc.id; // Отображаемое имя
-                    partCarSelect.appendChild(opt);
-                });
-            }).catch(err => {
-                console.error("Не удалось загрузить группы совместимости:", err);
-                partCarSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
-            });
-        }
-
-        //         function updateSelects(clients, vehicles) {
-        //     carOwnerSelect.innerHTML = '<option value="">Выберите владельца</option>';
-        //     for (const id in clients) {
-        //         const opt = document.createElement('option');
-        //         opt.value = id;
-        //         opt.textContent = clients[id].name || id;
-        //         carOwnerSelect.appendChild(opt);
-        //     }
-
-        //     partCarSelect.innerHTML = '<option value="">Выберите автомобиль</option>';
-        //     for (const vin in vehicles) { // ← vin это ключ
-        //         const car = vehicles[vin];
-        //         const clientId = car.owner_id;
-        //         const clientName = clients[clientId]?.name || 'Неизвестен';
-        //         const opt = document.createElement('option');
-        //         opt.value = vin; // ✅ передаём VIN
-        //         opt.textContent = `${car.brand || ''} (${car.year || ''}) — ${clientName}`;
-        //         partCarSelect.appendChild(opt);
-        //     }
-        // }
-
-
-        // function updateSelects(clients, vehicles) {
-        //     carOwnerSelect.innerHTML = '<option value="">Выберите владельца</option>';
-        //     for (const id in clients) {
-        //         const opt = document.createElement('option');
-        //         opt.value = id;
-        //         opt.textContent = clients[id].name || id;
-        //         carOwnerSelect.appendChild(opt);
-        //     }
-
-        //     partCarSelect.innerHTML = '<option value="">Выберите автомобиль</option>';
-        //     for (const vehicleId in vehicles) {
-        //         const car = vehicles[vehicleId];
-        //         const clientId = car.owner_id;
-        //         const clientName = clients[clientId]?.name || 'Неизвестен';
-        //         const opt = document.createElement('option');
-        //         opt.value = vehicleId; // ← ID документа, не VIN
-        //         opt.textContent = `${car.brand || ''} (${car.year || ''}) — ${clientName} [VIN: ${car.vin}]`;
-        //         partCarSelect.appendChild(opt);
-        //     }
-        // }
-
-
-        // function updateSelects(clients, vehicles) {
-        //     // Владельцы для формы машины
-        //     carOwnerSelect.innerHTML = '<option value="">Выберите владельца</option>';
-        //     for (const id in clients) {
-        //         const opt = document.createElement('option');
-        //         opt.value = id;
-        //         opt.textContent = clients[id].name || id;
-        //         carOwnerSelect.appendChild(opt);
-        //     }
-
-        //     // Машины для формы запчасти
-        //     partCarSelect.innerHTML = '<option value="">Выберите автомобиль</option>';
-        //     for (const vin in vehicles) {
-        //         const car = vehicles[vin];
-        //         const clientId = car.owner_id;
-        //         const clientName = clients[clientId]?.name || 'Неизвестен';
-        //         const opt = document.createElement('option');
-        //         opt.value = vehicleId; // ← но нужно взять из данных
-        //         // opt.value = vin;
-        //         opt.textContent = `${car.brand || ''} (${car.year || ''}) — ${clientName}`;
-        //         partCarSelect.appendChild(opt);
-        //     }
-        // }
-
-        // Обработчики модального окна
-        uiButton.addEventListener('click', () => modal.classList.add('show'));
-
-        closeModal.addEventListener('click', () => modal.classList.remove('show'));
-
-        document.getElementById('formSelector').addEventListener('change', function () {
-            const formId = this.value;
-            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
-            document.getElementById(formId + 'Form').classList.add('active');
-        });
-
-
-
-        // === Обработчики форм (остаются как были) ===
-
-        driverForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const clientId = 'client_' + Date.now();
-            const clientData = {
-                id: clientId,
-                name: document.getElementById('driverName').value,
-                contact: document.getElementById('driverContact').value,
-                phone: document.getElementById('driverPhone').value,
-                cars: [],
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            db.collection('clients').doc(clientId).set(clientData)
-                .then(() => {
-                    alert('✅ Водитель добавлен!');
-                    this.reset(); // ← ОЧИСТКА ФОРМЫ
-                    modal.classList.remove('show');
-                    loadAndRender();
-                })
-                .catch(err => alert('❌ Ошибка: ' + err.message));
-        });
-
-        carForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            let vin = document.getElementById('carVin').value.trim().toUpperCase();
-            if (!vin) {
-                alert('VIN обязателен');
-                return;
-            }
-
-            // Генерируем уникальный ID, если VIN короче 5 символов (например, введено "12345")
-            const useAsId = vin.length >= 5 ? vin : 'manual_' + Date.now();
-
-            // Проверяем существование по ID (не только по 17-символьному VIN)
-            db.collection('vehicles').doc(useAsId).get().then(doc => {
-                if (doc.exists) {
-                    alert('❌ Машина с таким VIN (или ID) уже существует');
-                    return;
-                }
-
-                const carData = {
-                    vin: vin, // сохраняем оригинальный ввод
-                    brand: document.getElementById('carBrand').value.trim(),
-                    model: document.getElementById('carModel').value.trim(),
-                    engine: document.getElementById('carEngine').value.trim(),
-                    year: parseInt(document.getElementById('carYear').value) || null,
-                    plate: document.getElementById('carPlate').value.trim(),
-                    owner_id: document.getElementById('carOwner').value,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                db.collection('vehicles').doc(useAsId).set(carData).then(() => {
-                    // Привязка к клиенту
-                    if (carData.owner_id) {
-                        db.collection('clients').doc(carData.owner_id).update({
-                            cars: firebase.firestore.FieldValue.arrayUnion(useAsId)
-                        }).catch(() => { });
-                    }
-                    alert('✅ Машина добавлена');
-                    this.reset();
-                    modal.classList.remove('show');
-                    loadAndRender();
-                }).catch(err => {
-                    alert('❌ Ошибка сохранения: ' + err.message);
-                });
-            });
-        });
-
-        
-
-        partForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const article = document.getElementById('partArticle').value.trim();
-            if (!article) return;
-
-            const partData = {
-                article: article,
-                name: document.getElementById('partName').value,
-                brand: document.getElementById('partBrand').value,
-                compat_group: document.getElementById('partCar').value, // ← ID группы
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            db.collection('parts').doc(article).set(partData)
-                .then(() => {
-                    alert('✅ Запчасть добавлена!');
-                    this.reset(); // ← ОЧИСТКА ФОРМЫ
-                    modal.classList.remove('show');
-                    loadAndRender();
-                })
-                .catch(err => alert('❌ Ошибка: ' + err.message));
-        });
-
-
-        document.getElementById('compatForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const id = document.getElementById('compatId').value.trim();
-            const name = document.getElementById('compatName').value.trim();
-            const brand = document.getElementById('compatBrand').value.trim();
-
-            if (!id || !name || !brand) {
-                alert('❌ ID, название и бренд — обязательны');
-                return;
-            }
-
-            const groupData = {
-                name: name,
-                brand: brand,
-                model: document.getElementById('compatModel').value.trim(),
-                engine: document.getElementById('compatEngine').value.trim()
-            };
-
-            db.collection('compatibility').doc(id).set(groupData)
-                .then(() => {
-                    alert('✅ Группа добавлена');
-                    // Очищаем форму
-                    document.getElementById('compatForm').reset();
-                    loadAndRender();
-                })
-                .catch(err => {
-                    alert('❌ Ошибка: ' + err.message);
-                });
-        });
-
-        document.getElementById('exportJsonBtn').addEventListener('click', async () => {
-            const exportData = { parts: {}, vehicles: {}, clients: {}, compatibility: {} };
-            const collections = ['parts', 'vehicles', 'clients', 'compatibility'];
-            for (const colName of collections) {
-                const snapshot = await db.collection(colName).get();
-                snapshot.forEach(doc => {
-                    exportData[colName][doc.id] = doc.data();
-                });
-            }
-            const jsonStr = JSON.stringify(exportData, null, 2);
-            const output = document.getElementById('jsonOutput');
-            output.textContent = jsonStr;
-            output.style.display = 'block';
-            output.focus();
-            output.select();
-            alert('Готово! Скопируйте текст выше и сохраните как parts_system.json');
-        });
-
-        document.addEventListener('change', function (e) {
-    if (e.target.id === 'filterByModel' || e.target.id === 'filterByEngine') {
-        // Найти активную выбранную машину и перерисовать
-        const selectedCarItem = document.querySelector('.car-item.selected');
-        if (selectedCarItem) {
-            const vin = selectedCarItem.getAttribute('data-vin');
-            if (vin) {
-                const vehicles = {}; // нужно получить данные машины
-                db.collection('vehicles').doc(vin).get().then(doc => {
-                    if (doc.exists) {
-                        showPartsForCar(vin, doc.data());
-                    }
-                });
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
             }
         }
-    }
-});
-        // Загружаем данные при старте
-        document.addEventListener('DOMContentLoaded', loadAndRender);
+
+        // Глобальные функции
+        window.addModelToBrand = addModelToBrand;
+        window.addEngineLink = addEngineLink;
+
+        // Запуск
+        loadData();
     </script>
-
 </body>
 
 </html>
-
